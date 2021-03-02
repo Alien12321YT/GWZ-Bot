@@ -1,0 +1,209 @@
+{
+    "players": {
+        "758717242141180005": {
+            "wallet": 0,
+            "bank": 2695,
+            "inv": [
+                "discordbot"
+            ],
+            "blacklist": false
+        },
+        "786919685870452786": {
+            "wallet": 28989,
+            "bank": 368322,
+            "inv": [
+                "bread",
+                "alien",
+                "cookie",
+                "cookie"
+            ],
+            "blacklist": false
+        },
+        "701469203278069781": {
+            "wallet": 69,
+            "bank": 0,
+            "inv": [],
+            "blacklist": false
+        },
+        "766104225926873088": {
+            "wallet": 69,
+            "bank": 0,
+            "inv": [],
+            "blacklist": false
+        },
+        "704673189095276552": {
+            "wallet": 13289,
+            "bank": 0,
+            "inv": [],
+            "blacklist": false
+        },
+        "725600926509039688": {
+            "wallet": 69,
+            "bank": 0,
+            "inv": [],
+            "blacklist": false
+        },
+        "676750433469071361": {
+            "wallet": 25,
+            "bank": 100422,
+            "inv": [
+                "cookie",
+                "cookie",
+                "cookie",
+                "cookie",
+                "cookie",
+                "cookie",
+                "cookie",
+                "cookie",
+                "cookie",
+                "cookie",
+                "cookie",
+                "cookie",
+                "cookie",
+                "cookie",
+                "cookie",
+                "cookie",
+                "cookie",
+                "cookie",
+                "cookie",
+                "cookie",
+                "alien",
+                "discordbot"
+            ],
+            "blacklist": false
+        },
+        "682453489766760473": {
+            "wallet": 4622,
+            "bank": 544460,
+            "inv": [
+                "bread"
+            ],
+            "blacklist": false
+        },
+        "737317764770955275": {
+            "wallet": 27703,
+            "bank": 6780000,
+            "inv": [],
+            "blacklist": false
+        },
+        "791305669151424524": {
+            "wallet": 69,
+            "bank": 0,
+            "inv": [],
+            "blacklist": false
+        },
+        "797693868652363827": {
+            "wallet": 69,
+            "bank": 490376,
+            "inv": []
+        },
+        "736500707091415071": {
+            "wallet": 69,
+            "bank": 0,
+            "inv": []
+        },
+        "708726342190891138": {
+            "wallet": 69,
+            "bank": 0,
+            "inv": []
+        },
+        "717348236150571008": {
+            "wallet": 69,
+            "bank": 0,
+            "inv": []
+        },
+        "718109447825915946": {
+            "wallet": 69,
+            "bank": 0,
+            "inv": [
+                "badge_author"
+            ]
+        },
+        "692250820741300266": {
+            "wallet": 25534,
+            "bank": 0,
+            "inv": []
+        },
+        "811271960776409159": {
+            "wallet": 69,
+            "bank": 0,
+            "inv": []
+        },
+        "431536235543265292": {
+            "wallet": 69,
+            "bank": 0,
+            "inv": []
+        }
+    },
+    "shop": [
+        {
+            "name": "Cookie :cookie:",
+            "name_s": "Cookie",
+            "id": "cookie",
+            "price": 10,
+            "description": "Just a cookie.",
+            "sellable": false,
+            "viewable": true
+        },
+        {
+            "name": "Bread :french_bread:",
+            "name_s": "Bread",
+            "id": "bread",
+            "price": 40000,
+            "description": "Not a normal bread, this bread tastes 100 times better than all the bread in the world!",
+            "sellable": false,
+            "viewable": true
+        },
+        {
+            "name": "Alien <:item_alien:811548553976741919>",
+            "name_s": "Alien",
+            "id": "alien",
+            "price": 12321,
+            "description": "<@!718109447825915946> was here.",
+            "sellable": false,
+            "viewable": true
+        },
+        {
+            "name": "Discord Bot <:other_logo:811584207482519573>",
+            "name_s": "Discord Bot",
+            "id": "discordbot",
+            "price": 1000,
+            "description": "A Discord Bot, straight out of the code.",
+            "sellable": false,
+            "viewable": true
+        },
+        {
+            "name": "Giraffe :giraffe:",
+            "name_s": "Giraffe",
+            "id": "giraffe",
+            "price": 1000,
+            "description": "It's a giraffe!",
+            "sellable": true,
+            "viewable": true
+        },
+        {
+            "name": "Author's Badge <:badge_author:814130632736505866>",
+            "name_s": "Author's Badge",
+            "id": "badge_author",
+            "price": null,
+            "description": "The author's badge, the rarest item. They are only for the authors.",
+            "sellable": false,
+            "viewable": true
+        },
+        {
+            "name": "Winner's Badge <:badge_winner:814145557957312512>",
+            "name_s": "Winner's Badge",
+            "id": "badge_winner",
+            "price": null,
+            "description": "If you win a gambling game three times straight you will get this badge.",
+            "sellable": false,
+            "viewable": true
+        }
+    ],
+    "other": {
+        "sale": 0,
+        "sale_name": "",
+        "global_money_boost": 0,
+        "countup": 37
+    }
+}
