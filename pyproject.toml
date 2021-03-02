@@ -2,7 +2,7 @@
 name = "thisfakeprogrammers"
 version = "0.1.0"
 description = "Discord Bot"
-authors = ["Your Name <you@example.com>"]
+authors = ["Alien 12321 <idonthaveanemail@dontmsgme.notmyemail>","GWZ Youtube <idkhisemail@soimnotgonnawriteit.sothisisnothisemail>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
