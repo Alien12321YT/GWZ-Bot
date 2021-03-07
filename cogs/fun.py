@@ -46,5 +46,77 @@ class fun(commands.Cog):
 
         await ctx.send(random_choice)
 
+    @commands.command(name='emojify')
+    async def emojify_command(self,ctx,*,msg:str=None):
+        result = ''
+        if msg != None:
+            for letter in list(msg):
+                letter = letter.lower()
+                if letter == 'a':
+                    result += ':regional_indicator_a: '
+                elif letter == 'b':
+                    result += ':regional_indicator_b: '
+                elif letter == 'c':
+                    result += ':regional_indicator_c: '
+                elif letter == 'd':
+                    result += ':regional_indicator_d: '
+                elif letter == 'e':
+                    result += ':regional_indicator_e: '
+                elif letter == 'f':
+                    result += ':regional_indicator_f: '
+                elif letter == 'g':
+                    result += ':regional_indicator_g: '
+                elif letter == 'h':
+                    result += ':regional_indicator_h: '
+                elif letter == 'i':
+                    result += ':regional_indicator_i: '
+                elif letter == 'j':
+                    result += ':regional_indicator_j: '
+                elif letter == 'k':
+                    result += ':regional_indicator_k: '
+                elif letter == 'l':
+                    result += ':regional_indicator_l: '
+                elif letter == 'm':
+                    result += ':regional_indicator_m: '
+                elif letter == 'n':
+                    result += ':regional_indicator_n: '
+                elif letter == 'o':
+                    result += ':regional_indicator_o: '
+                elif letter == 'p':
+                    result += ':regional_indicator_p: '
+                elif letter == 'q':
+                    result += ':regional_indicator_q: '
+                elif letter == 'r':
+                    result += ':regional_indicator_r: '
+                elif letter == 's':
+                    result += ':regional_indicator_s: '
+                elif letter == 't':
+                    result += ':regional_indicator_t: '
+                elif letter == 'u':
+                    result += ':regional_indicator_u: '
+                elif letter == 'v':
+                    result += ':regional_indicator_v: '
+                elif letter == 'w':
+                    result += ':regional_indicator_w: '
+                elif letter == 'x':
+                    result += ':regional_indicator_x: '
+                elif letter == 'y':
+                    result += ':regional_indicator_y: '
+                elif letter == 'z':
+                    result += ':regional_indicator_z: '
+                elif letter == ' ':
+                    result += '    '
+                elif letter == '\\':
+                    result += '\\'
+                else:
+                    result += str(letter)
+            await ctx.send(result)
+        else:
+            await ctx.send('You didn\'t give me a valid string for `msg`!')
+    
+    @commands.command(name='powerof2',aliases=['po2'])
+    async def po2_command(self,ctx):
+        await ctx.send(str(2**random.randint(0,63)))
+
 def setup(bot):
     bot.add_cog(fun(bot))

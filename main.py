@@ -6,7 +6,7 @@ from pingsux import up
 import discord_slash as sdiscord
 
 client = commands.Bot(command_prefix = '^')
-slashclient = sdiscord.SlashCommand(client)
+slash = sdiscord.SlashCommand(client)
 @client.remove_command("help")
 
 @client.event
@@ -16,7 +16,7 @@ async def on_ready():
         type=discord.ActivityType.playing, name=f"^help | {len(client.guilds)} servers and {sum(guild.member_count for guild in client.guilds)} users"
     ))
 
-@slashclient.slash(name='pingslash')
+@slash.slash(name='pingslash')
 async def ping_c_slash(ctx:sdiscord.SlashContext):
     await ctx.send(f'Pong! {round(client.latency*1000,1)} ms')
 
@@ -42,6 +42,7 @@ async def help(ctx):
     embed.add_field(name = "Moderation", value = "^help moderation", inline = False)
     embed.add_field(name = "Math", value = "^help math", inline = False)
     embed.add_field(name = "Server", value = "^help server", inline = False)
+    embed.add_field(name = "Info", value = "^help info")
     embed.add_field(name = "Other", value = "^help other", inline = False)
     embed.set_footer(icon_url = ctx.author.avatar_url, text = f"Requested by {ctx.author.name}")
     embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/797693868652363827/32ada26d274dc9cf8795e2b485a2785e.png?size=256")
@@ -102,6 +103,15 @@ async def currency(ctx):
     embed = discord.Embed(title = "Currency", description = "The currency system of this bot", color = ctx.author.color)
 
     embed.add_field(name = "Currency commands", value = "balance, inventory, withdraw, deposit, beg, give, shop, buy, sell, slots, guessnumber, countup")
+
+    await ctx.send(embed=embed)
+
+@help.command()
+async def info(ctx):
+
+    embed = discord.Embed(title = "Info", description = "Commands which can like show you info about stuff", color = ctx.author.color)
+
+    embed.add_field(name = "Info commands", value = "balance, inventory, withdraw, deposit, beg, give, shop, buy, sell, slots, guessnumber, countup")
 
     await ctx.send(embed=embed)
 
@@ -263,7 +273,7 @@ async def shop(ctx):
 
 @help.command(aliases=['slot'])
 async def slots(ctx):
-    embed = discord.Embed(title = "Slots", description = "A slots system where you can win money. If all the three emojis are not same then you lose your bet. If all the three emojis are same then you win 2.5x your bet. Note: It's not that easy to win.", color = ctx.author.color)
+    embed = discord.Embed(title = "Slots", description = "A slots system where you can win money. If all the three emojis are not same then you lose your bet. If all the three emojis are same then you win 2.75x your bet. Note: It's not that easy to win.", color = ctx.author.color)
 
     embed.add_field(name = "**Syntax**", value = "^slots <amount>")
     embed.add_field(name = "**Aliases**", value = "slot")
@@ -390,7 +400,7 @@ async def inventory(ctx):
 
     await ctx.send(embed=embed)
 
-extensions = ['cogs.currency','cogs.fun', 'cogs.math', 'cogs.moderation', 'cogs.server']
+extensions = ['cogs.currency','cogs.fun', 'cogs.math', 'cogs.moderation', 'cogs.server','cogs.info']
 
 if __name__ == '__main__':
     for ext in extensions:
