@@ -3,8 +3,10 @@ from discord.ext import commands
 import datetime
 import os
 from pingsux import up
+import discord_slash as sdiscord
 
 client = commands.Bot(command_prefix = '^')
+slashclient = sdiscord.SlashCommand(client)
 @client.remove_command("help")
 
 @client.event
@@ -13,6 +15,10 @@ async def on_ready():
     await client.change_presence(status=discord.Status.dnd,activity=discord.Activity(
         type=discord.ActivityType.playing, name=f"^help | {len(client.guilds)} servers and {sum(guild.member_count for guild in client.guilds)} users"
     ))
+
+@slashclient.slash(name='pingslash')
+async def ping_c_slash(ctx:sdiscord.SlashContext):
+    await ctx.send(f'Pong! {round(client.latency*1000,1)} ms')
 
 @client.event
 async def on_connect():

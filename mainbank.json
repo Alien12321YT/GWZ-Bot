@@ -113,14 +113,14 @@
             "inv": []
         },
         "718109447825915946": {
-            "wallet": 69,
+            "wallet": 20949,
             "bank": 0,
             "inv": [
                 "badge_author"
             ]
         },
         "692250820741300266": {
-            "wallet": 25534,
+            "wallet": 0,
             "bank": 0,
             "inv": []
         },
@@ -204,6 +204,6 @@
         "sale": 0,
         "sale_name": "",
         "global_money_boost": 0,
-        "countup": 37
+        "countup": 101
     }
 }

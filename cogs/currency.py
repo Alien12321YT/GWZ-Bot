@@ -200,7 +200,7 @@ class currency(commands.Cog):
 
         earnings = random.randrange(690)
 
-        await ctx.send(f"{ctx.author.mention} Someone gave you ⏣{earnings}!")
+        await ctx.send(f"{ctx.author.mention} Someone gave you **⏣{earnings}**!")
 
 
  
@@ -231,7 +231,7 @@ class currency(commands.Cog):
         await update_bank(ctx.author,amount)
         await update_bank(ctx.author,-1*amount,"bank")
 
-        await ctx.send(f"⏣{amount} withdrawn!")
+        await ctx.send(f"**⏣{amount}** withdrawn!")
 
     @commands.command(aliases=['dep'])
     async def deposit(self, ctx,amount = None):
@@ -255,7 +255,7 @@ class currency(commands.Cog):
         await update_bank(ctx.author,-1*amount)
         await update_bank(ctx.author,amount,"bank")
 
-        await ctx.send(f"⏣{amount} deposited!")
+        await ctx.send(f"**⏣{amount}** deposited!")
 
     @commands.command(aliases=['send'])
     @commands.cooldown(1,10, commands.BucketType.user)
@@ -286,8 +286,8 @@ class currency(commands.Cog):
         await update_bank(ctx.author,-1*amount,"wallet")
         await update_bank(member,amount,"wallet")
 
-        await ctx.send(f"You gave {member.name} ⏣{amount}!")
-        await ctx.bot.get_guild(811547367979221042).get_channel(811583394033958943).send(f'{ctx.author.mention} has given {member.mention} ⏣{amount}')
+        await ctx.send(f"You gave {member.name} **⏣{amount}!**")
+        await ctx.bot.get_guild(811547367979221042).get_channel(811583394033958943).send(f'{ctx.author.mention} has given {member.mention} **⏣{amount}**')
 
     @commands.command()
     @commands.cooldown(1,4, commands.BucketType.user)
@@ -322,7 +322,77 @@ class currency(commands.Cog):
     @commands.cooldown(1,3, commands.BucketType.user)
     async def slots(self, ctx,amount = None):
         await open_account(ctx.author)
-        await ctx.send("The slots command is down due to a bug which i have no idea how to fix. This command will be back if i somehow be able to fix it.")
+        with open('mainbank.json','r') as f:
+            bank = json.load(f)
+        if amount == None:
+            await ctx.send("Please enter the amount you want to bet ;-;")
+            return
+
+        bal = await update_bank(ctx.author)
+        if amount == "all":
+            amount = bal[0]
+
+        amount = int(amount)
+        if amount>bal[0]:
+                await ctx.send("You don't even have that much money bruh ;-;")
+                return
+        if amount<0:
+            await ctx.send("Amount must be positive...")
+            return
+        if amount<100:
+                await ctx.send("You can't bet less than 100 coins")
+                return
+        if amount>169000:
+                await ctx.send("You can't bet more than **⏣169,000** at once. If I let you bet any amount you will have 0 coins easily")
+                return
+
+        
+        win = 0
+        chance_calc = random.randint(1,random.randint(2,3))
+
+        if chance_calc == 1:
+            win = True
+        
+        final = []
+        emojilist = [":eggplant:",":ok_hand:",":joy:",":cow:",":slight_smile:","<:item_alien:817236864397475880>","<:gwzbot:816986102824435772>",':flushed:',":diamond_shape_with_a_dot_inside:","<:badge_w:817346254953512962>","<:dildo:817769112750784532>","<a:DogeCoin:817944887784767538>"]
+        emoji = random.choice(emojilist)
+        loseemojilist = emojilist.copy()
+        loseemojilist.pop(loseemojilist.index(emoji))
+        for i in range(3):
+            if win:
+                final.append(emoji)
+            else:
+                final.append(random.choice(loseemojilist))
+                while final[0] == final[1] == final[2]:
+                    final = []
+                    final.append(random.choice(loseemojilist))
+        
+        em1 = final[0]
+        em2 = final[1]
+        em3 = final[2]
+        await ctx.send(f'{ctx.author.mention}\'s slots machine:\n__|{em1}|{em2}|{em3}|__')
+
+        money_outcome = 0
+
+        if win:
+            bank['players'][str(ctx.author.id)]['wallet'] += int(round(2.75*amount)) 
+            await ctx.send("You won! GG :)")
+            money_outcome = round(2.5*amount)
+        else:
+            bank['players'][str(ctx.author.id)]['wallet'] -= amount
+            await ctx.send("You lost! Sad :(")
+            money_outcome = round(amount)
+    
+        outcome = ''
+        if win:
+            outcome = 'won'
+        else:
+            outcome = 'lost'
+
+        await ctx.bot.get_guild(811547367979221042).get_channel(811583394033958943).send(f'{ctx.author.mention} used slots and {outcome} ⏣{money_outcome}') 
+
+        with open('mainbank.json','w') as f:
+            json.dump(bank,f,indent=4)
     
     @commands.command()
     @commands.cooldown(1,10, commands.BucketType.user)
@@ -346,14 +416,17 @@ class currency(commands.Cog):
             await ctx.send("Amount must be positive...")
             return
         if amount<100:
-            await ctx.send("You can't bet less than 100 coins")
+            await ctx.send("You can't bet less than **⏣100**")
             return
-        if amount>250000:
-            await ctx.send("You can't bet more than ⏣250,000 at once. If I let you bet any amount you will have 0 coins easily")
+        if amount>169000:
+            await ctx.send("You can't bet more than **⏣169,000** at once. If I let you bet any amount you will have 0 coins easily")
             return
             
         await ctx.send("Enter your guess between 1 to 10")
-        randomNumber = random.randint(1,10)
+        if random.randint(1,10000) != 10000:
+            randomNumber = random.randint(1,10)
+        else:
+            randomNumber = 69 
         guessNumber = 0
         def check(m):
             return m.author == ctx.author and m.channel == ctx.channel
@@ -366,13 +439,25 @@ class currency(commands.Cog):
         except:
             await ctx.send('Enter a valid number... -_-')
         if guessNumber == randomNumber:
-            await update_bank(ctx.author,round(5*amount))
+            await update_bank(ctx.author,round(6.25*amount))
             await ctx.send("You won! :)")
 
         else:
             await update_bank(ctx.author,-1*amount)
             await ctx.send("You lost! :(")
             await ctx.send(f"Number was {randomNumber}")
+        with open('mainbank.json','w') as f:
+            json.dump(bank,f,indent=4)
+
+        outcome = ''
+        if guessNumber == randomNumber:
+            outcome = 'won'
+            money_outcome = round(6.25*amount) 
+        else:
+            outcome = 'lost'
+            money_outcome = amount
+
+        await ctx.bot.get_guild(811547367979221042).get_channel(811583394033958943).send(f'{ctx.author.mention} used guessnumber and {outcome} ⏣{money_outcome}') 
 
     @commands.command()
     @commands.check(only_authors)
@@ -417,22 +502,26 @@ class currency(commands.Cog):
         question = int(question)
         if question == None:
             await ctx.send("Enter a valid amount")
-        if question >= 2300000:
+        if 7125 < question >= 2300000:
             await ctx.send(f"{question}, coins, you would have to pay", round({question} / 0.85, 0), "with a 15% tax rate")
-        elif question >= 712500:
+        elif 97001 < question >= 712500:
             await ctx.send(f"{question}, coins, you would have to pay", round({question} / 0.92, 0), "with a 8% tax rate")
-        elif question >= 97001:
+        elif 48959 < question >= 97001:
             await ctx.send(f"{question}, coins, you would have to pay", round({question} / 0.95, 0), "with a 5% tax rate")
-        elif question >= 48959:
+        elif 25001 < question >= 48959:
             await ctx.send(f"{question}, coins, you would have to pay", round({question} / 0.97, 0), "with a 3% tax rate")
-        elif question >= 25001:
+        elif 1 < question >= 25001:
             await ctx.send(f"{question}, coins, you would have to pay", round({question} / 0.99, 0), "with a 1% tax rate")
-        elif question >= 1:
+        elif 0 < question >= 1:
             await ctx.send(f"{question}, coins, You would have to pay {question}")
         elif question == 0:
             await ctx.send("Um, 0 doesnt have a tax dumbass")
         else:
             await ctx.send("Dont enter commas, words or idk for tax calculations...")
+    
+    @commands.command()
+    async def wheel(self, ctx):
+        await ctx.send("")
 
 def setup(bot):
     bot.add_cog(currency(bot))
