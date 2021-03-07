@@ -3,10 +3,9 @@ from discord.ext import commands
 import datetime
 import os
 from pingsux import up
-import discord_slash as sdiscord
 
 client = commands.Bot(command_prefix = '^')
-slash = sdiscord.SlashCommand(client)
+slash = discord.SlashCommand(client)
 @client.remove_command("help")
 
 @client.event
@@ -15,10 +14,6 @@ async def on_ready():
     await client.change_presence(status=discord.Status.dnd,activity=discord.Activity(
         type=discord.ActivityType.playing, name=f"^help | {len(client.guilds)} servers and {sum(guild.member_count for guild in client.guilds)} users"
     ))
-
-@slash.slash(name='pingslash')
-async def ping_c_slash(ctx:sdiscord.SlashContext):
-    await ctx.send(f'Pong! {round(client.latency*1000,1)} ms')
 
 @client.event
 async def on_connect():
@@ -111,7 +106,39 @@ async def info(ctx):
 
     embed = discord.Embed(title = "Info", description = "Commands which can like show you info about stuff", color = ctx.author.color)
 
-    embed.add_field(name = "Info commands", value = "balance, inventory, withdraw, deposit, beg, give, shop, buy, sell, slots, guessnumber, countup")
+    embed.add_field(name = "Info commands", value = "member, role, channel, memberinfo, roleinfo, guildinfo, channelinfo")
+
+    await ctx.send(embed=embed)
+
+@help.command()
+async def member(ctx):
+    embed = discord.Embed(title = "Member", description = "Gets an ID of a member and turns it into a member. Useful for developers.", color = ctx.author.color)
+
+    embed.add_field(name = "**Syntax**", value = "^kill <member>")
+
+    await ctx.send(embed=embed)
+
+@help.command()
+async def role(ctx):
+    embed = discord.Embed(title = "Role", description = "Gets an ID of a role and turns it into a role. Useful for developers.", color = ctx.author.color)
+
+    embed.add_field(name = "**Syntax**", value = "^kill <member>")
+
+    await ctx.send(embed=embed)
+
+@help.command()
+async def channel(ctx):
+    embed = discord.Embed(title = "Channel", description = "Gets an ID of a channel and turns it into a channel. Useful for developers.", color = ctx.author.color)
+
+    embed.add_field(name = "**Syntax**", value = "^kill <member>")
+
+    await ctx.send(embed=embed)
+
+@help.command()
+async def memberinfo(ctx):
+    embed = discord.Embed(title = "Memberinfo", description = "Gets an ID of a role and turns it into a role. Useful for developers..", color = ctx.author.color)
+
+    embed.add_field(name = "**Syntax**", value = "^kill <member>")
 
     await ctx.send(embed=embed)
 
@@ -119,7 +146,7 @@ async def info(ctx):
 async def fun(ctx):
     embed = discord.Embed(title = "Fun", description = "Commands which are kinda fun", color = ctx.author.color)
 
-    embed.add_field(name = "Fun commands", value = "8ball, pp, kill")
+    embed.add_field(name = "Fun commands", value = "8ball, pp, kill, emojify")
 
     await ctx.send(embed=embed)
 
@@ -127,15 +154,14 @@ async def fun(ctx):
 async def moderation(ctx):
     embed = discord.Embed(title = "Moderation", description = "The moderation system", color = ctx.author.color)
 
-    embed.add_field(name = "Moderation commands", value = "purge")
-
+    embed.add_field(name = "Moderation commands", value = "purge, ban, kick")
     await ctx.send(embed=embed)
 
 @help.command()
 async def math(ctx):
     embed = discord.Embed(title = "Math", description = "Basically a calculator", color = ctx.author.color)
 
-    embed.add_field(name = "Math commands", value = "addition, subtract, multiply, divide, power, randomnumber, squareroot")
+    embed.add_field(name = "Math commands", value = "add, subtract, multiply, divide, modulo, isprime")
 
     await ctx.send(embed=embed)
 

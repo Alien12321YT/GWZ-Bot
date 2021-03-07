@@ -29,7 +29,7 @@ class Server_Info(commands.Cog):
         else:
             await ctx.send('Channel with ID: `{}` is not a channel in {}!'.format(id,ctx.guild.name))
 
-    @commands.command(help='Shows information about the member.')
+    @commands.command()
     async def memberinfo(self,ctx,member:discord.Member=None):
         if member != None:
             embed = discord.Embed(
