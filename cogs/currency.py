@@ -389,8 +389,6 @@ class currency(commands.Cog):
         else:
             outcome = 'lost'
 
-        await ctx.bot.get_guild(811547367979221042).get_channel(811583394033958943).send(f'{ctx.author.mention} used slots and {outcome} ⏣{money_outcome}') 
-
         with open('mainbank.json','w') as f:
             json.dump(bank,f,indent=4)
     
@@ -457,8 +455,6 @@ class currency(commands.Cog):
             outcome = 'lost'
             money_outcome = amount
 
-        await ctx.bot.get_guild(811547367979221042).get_channel(811583394033958943).send(f'{ctx.author.mention} used guessnumber and {outcome} ⏣{money_outcome}') 
-
     @commands.command()
     @commands.check(only_authors)
     async def setmoney(self, ctx, player: discord.User, amount: int, mode:str='wallet'):
@@ -518,10 +514,6 @@ class currency(commands.Cog):
             await ctx.send("Um, 0 doesnt have a tax dumbass")
         else:
             await ctx.send("Dont enter commas, words or idk for tax calculations...")
-    
-    @commands.command()
-    async def wheel(self, ctx):
-        await ctx.send("")
 
 def setup(bot):
     bot.add_cog(currency(bot))

@@ -4,29 +4,29 @@ import datetime
 import os
 from pingsux import up
 
-client = commands.Bot(command_prefix = '^')
-slash = discord.SlashCommand(client)
+client = commands.AutoShardedBot(command_prefix = '^')
 @client.remove_command("help")
 
 @client.event
 async def on_ready():
     print(f"Bot is ready. {client.user}")
     await client.change_presence(status=discord.Status.dnd,activity=discord.Activity(
-        type=discord.ActivityType.playing, name=f"^help | {len(client.guilds)} servers and {sum(guild.member_count for guild in client.guilds)} users"
+        type=discord.ActivityType.playing, name=f"^help | {len(client.guilds)} servers"
     ))
 
 @client.event
-async def on_connect():
-    print('Bot has connected to Discord poggggg!')
+async def on_shard_connect(sid):
+    print(f'Shard #{sid} has connected.')
 
 @client.event
-async def on_disconnect():
-    print('Bot has disconnected from Discord not-so poggggg!')
+async def on_disconnect(sid):
+    print(f'Shard #{sid} has disconnected.')
 
 @client.event
 async def on_command_error(ctx,exception):
-  await ctx.send(str(exception))
-  raise exception
+    embed = discord.Embed(title = "Error!", description = f"{exception}", color = 0xff0609)
+    await ctx.send(embed=embed)
+    raise exception
 
 @client.group(invoke_without_command=True)
 async def help(ctx):
@@ -59,6 +59,14 @@ async def invite(ctx):
     ) 
     await ctx.send(embed=embed)
 
+@client.command(aliases=['urbandictionary'])
+async def urban(ctx,word=None):
+    if word == None:
+        await ctx.send("Mention a word. If you want to mention two or more words then don't give any space between the words")
+        return
+    else:
+        await ctx.send(f"https://urbandictionary.com/{word}")
+
 @client.command(name='ping')
 async def ping_c(ctx,brrr:str='false'):
     if str(brrr).lower() == 'true':
@@ -74,7 +82,7 @@ def only_authors(ctx):
 async def servers(ctx):
         activeservers = client.guilds
         for guild in activeservers:
-            await ctx.send(f"{guild.name}")
+            await ctx.send(f"{guild.name}, ID: #{guild.id}")
 
 @commands.check(only_authors)
 @client.command(name='copy')
@@ -114,7 +122,7 @@ async def info(ctx):
 async def member(ctx):
     embed = discord.Embed(title = "Member", description = "Gets an ID of a member and turns it into a member. Useful for developers.", color = ctx.author.color)
 
-    embed.add_field(name = "**Syntax**", value = "^kill <member>")
+    embed.add_field(name = "**Syntax**", value = "^member <member id>")
 
     await ctx.send(embed=embed)
 
@@ -122,7 +130,7 @@ async def member(ctx):
 async def role(ctx):
     embed = discord.Embed(title = "Role", description = "Gets an ID of a role and turns it into a role. Useful for developers.", color = ctx.author.color)
 
-    embed.add_field(name = "**Syntax**", value = "^kill <member>")
+    embed.add_field(name = "**Syntax**", value = "^role <role id>")
 
     await ctx.send(embed=embed)
 
@@ -130,15 +138,90 @@ async def role(ctx):
 async def channel(ctx):
     embed = discord.Embed(title = "Channel", description = "Gets an ID of a channel and turns it into a channel. Useful for developers.", color = ctx.author.color)
 
-    embed.add_field(name = "**Syntax**", value = "^kill <member>")
+    embed.add_field(name = "**Syntax**", value = "^channel <channel id>")
 
     await ctx.send(embed=embed)
 
 @help.command()
 async def memberinfo(ctx):
-    embed = discord.Embed(title = "Memberinfo", description = "Gets an ID of a role and turns it into a role. Useful for developers..", color = ctx.author.color)
+    embed = discord.Embed(title = "Memberinfo", description = "Shows info of the member", color = ctx.author.color)
 
-    embed.add_field(name = "**Syntax**", value = "^kill <member>")
+    embed.add_field(name = "**Syntax**", value = "^memberinfo <member>")
+
+    await ctx.send(embed=embed)
+
+@help.command()
+async def roleinfo(ctx):
+    embed = discord.Embed(title = "Roleinfo", description = "Shows info of the role", color = ctx.author.color)
+
+    embed.add_field(name = "**Syntax**", value = "^roleinfo <role>")
+
+    await ctx.send(embed=embed)
+
+@help.command()
+async def channelinfo(ctx):
+    embed = discord.Embed(title = "Channelinfo", description = "Shows info of the channel", color = ctx.author.color)
+
+    embed.add_field(name = "**Syntax**", value = "^channelinfo <channel>")
+
+    await ctx.send(embed=embed)
+
+@help.command()
+async def guildinfo(ctx):
+    embed = discord.Embed(title = "Guildinfo", description = "Shows info of the guild", color = ctx.author.color)
+
+    embed.add_field(name = "**Syntax**", value = "^guildinfo")
+
+    await ctx.send(embed=embed)
+
+@help.command()
+async def emojify(ctx):
+    embed = discord.Embed(title = "Emojify", description = "Turn letters and words into emojis", color = ctx.author.color)
+
+    embed.add_field(name = "**Syntax**", value = "^emojify <letters or words>")
+
+    await ctx.send(embed=embed)
+
+@help.command(aliases=['pow2'])
+async def powerof2(ctx):
+    embed = discord.Embed(title = "Powerof2", description = "Generates a number of 2^0 to 63.", color = ctx.author.color)
+
+    embed.add_field(name = "**Syntax**", value = "^powerof2")
+    embed.add_field(name = "**Aliases**", value = "pow2")
+
+    await ctx.send(embed=embed)
+
+@help.command(aliases=['urbandictionary'])
+async def urban(ctx):
+    embed = discord.Embed(title = "Urban", description = "Urban dictionary", color = ctx.author.color)
+
+    embed.add_field(name = "**Syntax**", value = "^urbandictionary <word or words without spaces>")
+    embed.add_field(name = "**Aliases**", value = "urbandictionary")
+
+    await ctx.send(embed=embed)
+
+@help.command(aliases=['time','clock'])
+async def currenttime(ctx):
+    embed = discord.Embed(title = "Currenttime", description = "Shows the current time of GMT 0", color = ctx.author.color)
+
+    embed.add_field(name = "**Syntax**", value = "^currenttime")
+    embed.add_field(name = "**Aliases**", value = "time, clock")
+
+    await ctx.send(embed=embed)
+
+@help.command()
+async def modulo(ctx):
+    embed = discord.Embed(title = "Modulo", description = "The modulo thing of math", color = ctx.author.color)
+
+    embed.add_field(name = "**Syntax**", value = "^modulo <num>")
+
+    await ctx.send(embed=embed)
+
+@help.command()
+async def isprime(ctx):
+    embed = discord.Embed(title = "Isprime", description = "Something with the prime numbers", color = ctx.author.color)
+
+    embed.add_field(name = "**Syntax**", value = "^isprime <num>")
 
     await ctx.send(embed=embed)
 
@@ -146,7 +229,7 @@ async def memberinfo(ctx):
 async def fun(ctx):
     embed = discord.Embed(title = "Fun", description = "Commands which are kinda fun", color = ctx.author.color)
 
-    embed.add_field(name = "Fun commands", value = "8ball, pp, kill, emojify")
+    embed.add_field(name = "Fun commands", value = "8ball, pp, kill, emojify, powerof2")
 
     await ctx.send(embed=embed)
 
@@ -154,7 +237,7 @@ async def fun(ctx):
 async def moderation(ctx):
     embed = discord.Embed(title = "Moderation", description = "The moderation system", color = ctx.author.color)
 
-    embed.add_field(name = "Moderation commands", value = "purge, ban, kick")
+    embed.add_field(name = "Moderation commands", value = "purge, currenttime, slowmode")
     await ctx.send(embed=embed)
 
 @help.command()
@@ -369,7 +452,7 @@ async def power(ctx):
 
 @help.command(aliases=['rand'])
 async def randomnumber(ctx):
-    embed = discord.Embed(title = "Randomnumber", description = "Find a random number between num1 and num2.", color = ctx.author.color)
+    embed = discord.Embed(title = "Randomnumber", description = 'Find a random number between num1 and num2. You can also type "b" for binary, "o" for oct, etc.', color = ctx.author.color)
 
     embed.add_field(name = "**Syntax**", value = "^randomnumber <num1> <num2>")
     embed.add_field(name = "**Aliases**", value = "rand")

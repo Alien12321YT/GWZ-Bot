@@ -117,6 +117,13 @@ class fun(commands.Cog):
     @commands.command(name='powerof2',aliases=['po2'])
     async def po2_command(self,ctx):
         await ctx.send(str(2**random.randint(0,63)))
+    
+    @commands.command(name='reverse')
+    async def reverse_c(self,ctx,*,msg:str=None):
+        if msg == None:
+            await ctx.send('​')
+        else:
+            await ctx.send(str(msg[::-1]))
 
 def setup(bot):
     bot.add_cog(fun(bot))

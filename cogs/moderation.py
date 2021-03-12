@@ -15,7 +15,7 @@ class moderation(commands.Cog):
     
     @commands.command(aliases=['time','clock'])
     async def currenttime(self,ctx):
-        await ctx.send(datetime.datetime.now().strftime('**%b %d, %Y** | *%I:%M:%S %p GMT* | Day #%j/365'))
+        await ctx.send(datetime.datetime.now().strftime('**%b %d, %Y** | %I:%M:%S %p GMT'))
 
     @commands.command()
     @commands.has_guild_permissions(manage_channels=True)
