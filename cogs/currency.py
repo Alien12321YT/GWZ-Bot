@@ -355,14 +355,18 @@ class currency(commands.Cog):
         final = []
         emojilist = [":eggplant:",":ok_hand:",":joy:",":cow:",":slight_smile:","<:item_alien:817236864397475880>","<:gwzbot:816986102824435772>",':flushed:',":diamond_shape_with_a_dot_inside:","<:badge_w:817346254953512962>","<:dildo:817769112750784532>","<a:DogeCoin:817944887784767538>"]
         emoji = random.choice(emojilist)
-        for i in range(3):
-            if win:
-                final.append(emoji)
-            else:
+        if win:
+            final.append(emoji)
+            final.append(emoji)
+            final.append(emoji)
+        else:
+            final.append(random.choice(emojilist))
+            final.append(random.choice(emojilist))
+            final.append(random.choice(emojilist))
+            print(final)
+            while final[0] == final[1] == final[2]:
+                final = []
                 final.append(random.choice(emojilist))
-                while final[0] == final[1] == final[2]:
-                    final = []
-                    final.append(random.choice(emojilist))
         
         em1 = final[0]
         em2 = final[1]
@@ -398,7 +402,6 @@ class currency(commands.Cog):
         if amount == None:
             await ctx.send("Please enter the amount you want to bet ;-;")
             return
-
         bal = await update_bank(ctx.author)
         if amount == "all":
             amount = bal[0]

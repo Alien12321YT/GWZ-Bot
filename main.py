@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import datetime
 import os
+import random
 from pingsux import up
 import json
 
@@ -37,16 +38,20 @@ async def on_disconnect(sid):
 
 @client.event
 async def on_command_error(ctx, exception):
-    embed = discord.Embed(title="Error!",
-                          description=f"{exception}",
-                          color=0xff0609)
+    embed = discord.Embed(
+        title="Error!",
+        description=f"{exception}",
+        color=0xff0609)
     await ctx.send(embed=embed)
     raise exception
 
 @client.event
 async def on_guild_join(g):
-    invite_code = str(await g.random.choice(g.text_channels).create_invite(max_age=60))
-    await client.get_guild(816957294218182707).get_channel(816975581530816553).send(f'I have just joined {g.name}, here\'s an invite!\n{invite_code}')
+    invite_channel = g.text_channels[0]
+    if g.rules_channel:
+        invite_channel = g.rules_channel
+    invite_code = str(await invite_channel.create_invite(max_age=90))
+    await client.get_guild(816957294218182707).get_channel(816975581530816553).send(f'I have just joined {g.name}, here\'s an invite!\n{invite_code}\nGuild #{len(client.guilds)}')
 
 @client.group(invoke_without_command=True)
 async def help(ctx):
@@ -276,10 +281,20 @@ async def guildinfo(ctx):
 @help.command()
 async def emojify(ctx):
     embed = discord.Embed(title="Emojify",
-                          description="Turn letters and words into emojis",
+                          description="Turn letters, words and numbers into emojis",
                           color=ctx.author.color)
 
-    embed.add_field(name="**Syntax**", value="^emojify <letters or words>")
+    embed.add_field(name="**Syntax**", value="^emojify <letters, words or numbers>")
+
+    await ctx.send(embed=embed)
+
+@help.command()
+async def reverse(ctx):
+    embed = discord.Embed(title="Reverse",
+                          description="Reverse some text",
+                          color=ctx.author.color)
+
+    embed.add_field(name="**Syntax**", value="^reverse <text>")
 
     await ctx.send(embed=embed)
 
