@@ -1,8 +1,6 @@
 from discord.ext import commands
 import discord
 import random
-import json
-import os
 
 class Math(commands.Cog):
     def __init__(self,bot):
@@ -22,9 +20,9 @@ class Math(commands.Cog):
     @commands.command(aliases=['sub'])
     async def subtract(self,ctx,*args):
         if len(args) >= 2:
-            num = int(args[0])
+            num = float(args[0])
             for i in args[1:]:
-                num -= int(i)
+                num -= float(i)
             coolstr = f'{args[0]}'
             for arg in args[1:]:
                 coolstr += f' - {arg} '
@@ -38,9 +36,9 @@ class Math(commands.Cog):
     @commands.command(aliases=['mult'])
     async def multiply(self,ctx,*args):
         if len(args) >= 2:
-            num = int(args[0])
+            num = float(args[0])
             for i in args[1:]:
-                num *= int(i)
+                num *= float(i)
             coolstr = f'{args[0]}'
             for arg in args[1:]:
                 coolstr += f' × {arg} '
@@ -54,9 +52,9 @@ class Math(commands.Cog):
     @commands.command(aliases=['div'])
     async def divide(self,ctx,*args):
         if len(args) >= 2:
-            num = int(args[0])
+            num = float(args[0])
             for i in args[1:]:
-                num /= int(i)
+                num /= float(i)
             coolstr = f'{args[0]}'
             for arg in args[1:]:
                 coolstr += f' ÷ {arg} '
@@ -70,9 +68,9 @@ class Math(commands.Cog):
     @commands.command(aliases=['remainder','rem','modu'])
     async def modulo(self,ctx,*args):
         if len(args) == 2:
-            num = int(args[0])
+            num = float(args[0])
             for i in args[1:]:
-                num %= int(i)
+                num %= float(i)
             coolstr = f'{args[0]}'
             for arg in args[1:]:
                 coolstr += f' % {arg} '
@@ -120,9 +118,9 @@ class Math(commands.Cog):
         if len(args) >= 2:
             if len(args) > 4:
                 await ctx.send('Too many numbers to count! You should put less than 4 numbers to raise, or else you could crash the bot faster than the web server would.')
-            num = int(args[0])
+            num = float(args[0])
             for i in args[1:]:
-                num **= int(i)
+                num **= float(i)
                 if len(str(num)) > 1024:
                     await ctx.send('Number was too big! The expected result was more than 1024 digits, which would flood chat faster than <@!718109447825915946>\'s spambot would.')
                     break

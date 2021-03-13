@@ -52,12 +52,11 @@ class currency(commands.Cog):
         users = await get_bank_data()
         wallet_amt = users['players'][str(member.id)]["wallet"]
         bank_amt = users['players'][str(member.id)]["bank"]
+        total_amt = wallet_amt + bank_amt
 
         embed = discord.Embed(
-            title=f"{member.name}'s balance",
+            title=f"{member.name}'s balance",description = f"**Wallet balance**: ⏣{wallet_amt}\n**Bank balance**: ⏣{bank_amt}\n**Total**: ⏣{total_amt}",
             color=discord.Color.red())
-        embed.add_field(name="Wallet balance",value=wallet_amt, inline = False)
-        embed.add_field(name ="Bank balance",value=bank_amt, inline = False)
         await ctx.send(embed=embed)
 
     @commands.command(aliases=['inv'])
@@ -356,16 +355,14 @@ class currency(commands.Cog):
         final = []
         emojilist = [":eggplant:",":ok_hand:",":joy:",":cow:",":slight_smile:","<:item_alien:817236864397475880>","<:gwzbot:816986102824435772>",':flushed:',":diamond_shape_with_a_dot_inside:","<:badge_w:817346254953512962>","<:dildo:817769112750784532>","<a:DogeCoin:817944887784767538>"]
         emoji = random.choice(emojilist)
-        loseemojilist = emojilist.copy()
-        loseemojilist.pop(loseemojilist.index(emoji))
         for i in range(3):
             if win:
                 final.append(emoji)
             else:
-                final.append(random.choice(loseemojilist))
+                final.append(random.choice(emojilist))
                 while final[0] == final[1] == final[2]:
                     final = []
-                    final.append(random.choice(loseemojilist))
+                    final.append(random.choice(emojilist))
         
         em1 = final[0]
         em2 = final[1]
