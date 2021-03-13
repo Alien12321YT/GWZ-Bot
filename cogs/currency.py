@@ -516,4 +516,4 @@ class currency(commands.Cog):
             await ctx.send("Dont enter commas, words or idk for tax calculations...")
 
 def setup(bot):
-    bot.add_cog(currency(bot))
+    bot.add_cog(currency(bot))        

@@ -6,12 +6,17 @@ import random
 from pingsux import up
 import json
 
-client = commands.AutoShardedBot(command_prefix='^')
+def get_prefix(client,msg):
+    with open('prefixes.json','r') as f:
+        p_d = json.load(f)
+    return p_d[str(msg.guild.id)]
+
+client = commands.AutoShardedBot(command_prefix=get_prefix)
 
 client.remove_command("help")
 
 def is_it_authors(ctx):
-    return ctx.message.author.id == 718109447825915946 or ctx.message.author.id == 692250820741300266
+    return ctx.message.author.id == 718109447825915946 or ctx.message.author.id == 692250820741300266 or ctx.message.author.id == 768674429819027456
 
 
 @client.command()
@@ -52,6 +57,9 @@ async def on_guild_join(g):
         invite_channel = g.rules_channel
     invite_code = str(await invite_channel.create_invite(max_age=90))
     await client.get_guild(816957294218182707).get_channel(816975581530816553).send(f'I have just joined {g.name}, here\'s an invite!\n{invite_code}\nGuild #{len(client.guilds)}')
+    with open('prefixes.json','r') as f:
+        p_d = json.load(f)
+    p_d[str(g.id)] = '^'
 
 @client.group(invoke_without_command=True)
 async def help(ctx):
@@ -68,7 +76,7 @@ async def help(ctx):
     embed.add_field(name="Server", value="^help server", inline=False)
     embed.add_field(name="Info", value="^help info")
     embed.add_field(name="Other", value="^help other", inline=False)
-    embed.add_field(name = "Links", value = "[Invite me](https://discord.com/api/oauth2/authorize?client_id=797693868652363827&permissions=2146959222&scope=bot) [-](https://youtu.be/dQw4w9WgXcQ) [Official Server](https://discord.gg/bB2GNXK2dE)", inline = False)
+    embed.add_field(name = "Links", value = "[Invite me](https://discord.com/api/oauth2/authorize?client_id=797693868652363827&permissions=8&scope=bot) [-](https://youtu.be/dQw4w9WgXcQ) [Official Server](https://discord.gg/bB2GNXK2dE)", inline = False)
     embed.add_field(name = "Vote links", value = "[top.gg](https://top.gg/bot/797693868652363827/vote) [-](https://youtu.be/dQw4w9WgXcQ) [Discord Boats](https://discord.boats/bot/797693868652363827/vote) [-](https://youtu.be/dQw4w9WgXcQ) [Discord Bot List](https://discordbotlist.com/bots/gwz-bot/upvote)", inline = False)
     embed.set_footer(icon_url=ctx.author.avatar_url,
                      text=f"Requested by {ctx.author.name}")
@@ -86,11 +94,11 @@ async def invite(ctx):
     if datetime.datetime.now().day == 1 and datetime.datetime.now().month == 4:
         link = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
     else:
-        link = 'https://discord.com/api/oauth2/authorize?client_id=797693868652363827&permissions=2146959222&scope=bot'
+        link = 'https://discord.com/api/oauth2/authorize?client_id=797693868652363827&permissions=8&scope=bot'
     description = f'Click [here]({link}) to invite me to your server!'
     embed = discord.Embed(title='Invite me!',
-                          description=description,
-                          color=0xfefefe)
+        description=description,
+        color=0xfefefe)
     await ctx.send(embed=embed)
 
 
@@ -147,9 +155,12 @@ async def reset_those_prefixes_or_else_we_all_die_because_of_you(ctx):
         for guild in client.guilds:
             prefix_data[str(guild.id)] = '^'
             guild_count += 1
-            if guild_count % 69 == 0:
+            if guild_count % 10 == 0:
                 print(f'Reset {guild_count} prefixes...')
         await ctx.send(f'Reset prefixes on {guild_count} servers. You have annoyed lots of ppl good job :).')
+        print(f'Reset all {guild_count} prefixes.')
+        with open('prefixes.json','w') as f:
+            json.dump(prefix_data,f,indent=4)
     else:
         return
 
@@ -756,6 +767,9 @@ async def inventory(ctx):
 
     await ctx.send(embed=embed)
 
+@client.command(aliases=['shit', 'sex'])
+async def cum(ctx, a:int=1, b:int=100) :
+    await ctx.send(f'U rubbed your nice little ***** and sprayed out {str(random.randint(int(a), int(b)))} ml of white stuff')
 
 extensions = [
     'cogs.currency', 'cogs.fun', 'cogs.math', 'cogs.moderation', 'cogs.server',
