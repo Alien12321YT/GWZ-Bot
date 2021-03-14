@@ -1,12 +1,67 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands,tasks
 import asyncio
 from discord.ext.commands.cooldowns import BucketType
 import random
 import json
 
+five_over_six = 5/6
+w = asyncio.sleep
+
 def only_authors(ctx):
     return ctx.author.id == 718109447825915946 or ctx.author.id == 692250820741300266
+
+@tasks.loop(seconds=five_over_six)
+async def update_time(bot):
+    with open('mainbank.json','r') as f:
+        time_ = json.load(f)
+    time_['time']['minute'] += 1
+    if time_['time']['minute'] >= 60:
+        time_['time']['hour'] += 1
+        time_['time']['minute'] = 0
+    if time_['time']['hour'] >= 24:
+        time_['time']['day'] += 1
+        time_['time']['hour'] = 0
+    if time_['time']['day'] > 40: 
+        time_['time']['season'] += 1
+        time_['time']['day'] = 0
+    if time_['time']['season'] >= 4:
+        time_['time']['year'] += 1 
+        time_['time']['season'] = 1
+    with open('mainbank.json','w') as f:
+        json.dump(time_,f,indent=4)
+    timer = time_['time']
+    min = str(timer['minute'])
+    if len(min) == 1:
+        min = '0' + str(min)
+    hour = timer['hour']
+    day = timer['day']
+    season = timer['season'] 
+    seastr = None
+    if season == 1:
+        seastr = 'Spring'
+    elif season == 2:
+        seastr = 'Summer'
+    elif season == 3:
+        seastr = 'Autumn'
+    elif season == 4:
+        seastr = 'Winter'
+    else:
+        seastr = 'Unknown'
+    year = timer['year']
+    if season == 1:
+        seastr_ = 'Spring <:seasn_spring:820335313472978954>'
+    elif season == 2:
+        seastr_ = 'Summer <:seasn_summer:820335372914917376>'
+    elif season == 3:
+        seastr_ = 'Autumn <:seasn_autumn:820335409820991528>'
+    elif season == 4:
+        seastr_ = 'Winter <:seasn_winter:820335445069135953>'
+    else:
+        seastr_ = 'Unknown'
+    if int(min) == 0:
+        print(f'Day {day} {hour}:{min} | {seastr} of Year {year}')
+    
 
 async def open_account(user):
     users = await get_bank_data()
@@ -43,6 +98,7 @@ async def update_bank(user,change = 0,mode = "wallet"):
 class currency(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        update_time.start(bot)
 
     @commands.command(aliases=['bal'])
     async def balance(self, ctx, member: discord.Member=None):
@@ -107,85 +163,91 @@ class currency(commands.Cog):
             amount = 0
             littler = True
         bankdata = await get_bank_data()
-        user = await open_account(ctx.author)
-        items = bankdata['shop']
-        itemids = []
-        itemfound = None
-        for i in items:
-            itemids.append(i['id'])
-        
-        if item.lower() in itemids:
-            if overexceed:
-                await ctx.send(f'`Whoops! You asked for {pre_amount} items, but the store only has 269. Looks like we\'ll have to roll with that! It will restock automatically.`')
-            if littler:
-                await ctx.send(f'`Whoops! You can\'t buy {pre_amount} items, use the sell command to get less {item}!`')
-            item = item.lower()
+        if bankdata['time']['hour'] >= 9 and bankdata['time']['hour'] < 17:
+            user = await open_account(ctx.author)
+            items = bankdata['shop']
+            itemids = []
+            itemfound = None
             for i in items:
-                if i['id'] == item:
-                    itemfound = i
-            itemname = itemfound['name_s']
-            if itemfound['price'] == None:
-                await ctx.send(f'You can\'t buy {itemname}!')
-                return
-            cost = itemfound['price'] * amount
-            itemid = itemfound['id']
-            if user['wallet'] >= cost:
-                if not(len(user['inv']) >= 2048 or (len(user['inv']) + amount) >= 2048):
-                    user['wallet'] -= cost
-                    await ctx.send(f'You\'ve bought {amount} {itemname}(s) for ⏣{cost}')
-                    await ctx.bot.get_guild(811547367979221042).get_channel(811583394033958943).send(f'{ctx.author.mention} has bought {amount} {itemname} for ⏣{cost}')
-                    for i in range(amount):
-                        user['inv'].append(itemid)
+                itemids.append(i['id'])
+            
+            if item.lower() in itemids:
+                if overexceed:
+                    await ctx.send(f'`Whoops! You asked for {pre_amount} items, but the store only has 269. Looks like we\'ll have to roll with that! It will restock automatically.`')
+                if littler:
+                    await ctx.send(f'`Whoops! You can\'t buy {pre_amount} items, use the sell command to get less {item}!`')
+                item = item.lower()
+                for i in items:
+                    if i['id'] == item:
+                        itemfound = i
+                itemname = itemfound['name_s']
+                if itemfound['price'] == None:
+                    await ctx.send(f'You can\'t buy {itemname}!')
+                    return
+                cost = itemfound['price'] * amount
+                itemid = itemfound['id']
+                if user['wallet'] >= cost:
+                    if not(len(user['inv']) >= 2048 or (len(user['inv']) + amount) >= 2048):
+                        user['wallet'] -= cost
+                        await ctx.send(f'You\'ve bought {amount} {itemname}(s) for ⏣{cost}')
+                        await ctx.bot.get_guild(811547367979221042).get_channel(811583394033958943).send(f'{ctx.author.mention} has bought {amount} {itemname} for ⏣{cost}')
+                        for i in range(amount):
+                            user['inv'].append(itemid)
+                    else:
+                        await ctx.send('You have too much items! Maybe try selling some?')
                 else:
-                    await ctx.send('You have too much items! Maybe try selling some?')
+                    await ctx.send('You don\'t have enough money!')
             else:
-                await ctx.send('You don\'t have enough money!')
+                await ctx.send('Bruh that item isn\'t even in the shop ;-; Do `^shop` to see items')
+                return False
+            bankdata['players'][str(ctx.author.id)] = user
+            
+            
+            with open('mainbank.json','w') as f:
+                json.dump(bankdata,f,indent=4)
         else:
-            await ctx.send('Bruh that item isn\'t even in the shop ;-; Do `^shop` to see items')
-            return False
-        bankdata['players'][str(ctx.author.id)] = user
-        
-        
-        with open('mainbank.json','w') as f:
-            json.dump(bankdata,f,indent=4)
+            await ctx.send('Hurb Mall is closed! It is open from 9:00 - 5:00. Come back soon!')
 
     @commands.command()
     async def sell(self, ctx,item:str='',amount:int=1):
         await open_account(ctx.author)
         bankdata = await get_bank_data()
-        user = await open_account(ctx.author)
-        items = bankdata['shop']
-        itemids = []
-        itemfound = None
-        for i in items:
-            itemids.append(i['id'])
-        
-        if item.lower() in itemids:
-            item = item.lower()
+        if bankdata['time']['hour'] >= 9 and bankdata['time']['hour'] < 17:
+            user = await open_account(ctx.author)
+            items = bankdata['shop']
+            itemids = []
+            itemfound = None
             for i in items:
-                if i['id'] == item:
-                    itemfound = i
-            cost = round((itemfound['price'] * amount) * (2/3))
-            itemid = itemfound['id']
-            itemname = itemfound['name_s']
-            if user['inv'].count(itemfound) <= amount:
-                if itemfound['sellable'] == True:
-                    user['wallet'] += cost
-                    await ctx.send(f'You\'ve sold {amount} {itemname}(s) for ⏣{cost}')
-                    await ctx.bot.get_guild(811547367979221042).get_channel(811583394033958943).send(f'{ctx.author.mention} has sold {amount} {itemname} for ⏣{cost}')
-                    for i in range(amount):
-                        user['inv'].append(itemid)
+                itemids.append(i['id'])
+            
+            if item.lower() in itemids:
+                item = item.lower()
+                for i in items:
+                    if i['id'] == item:
+                        itemfound = i
+                cost = round((itemfound['price'] * amount) * (2/3))
+                itemid = itemfound['id']
+                itemname = itemfound['name_s']
+                if user['inv'].count(itemfound) <= amount:
+                    if itemfound['sellable'] == True:
+                        user['wallet'] += cost
+                        await ctx.send(f'You\'ve sold {amount} {itemname}(s) for ⏣{cost}')
+                        await ctx.bot.get_guild(811547367979221042).get_channel(811583394033958943).send(f'{ctx.author.mention} has sold {amount} {itemname} for ⏣{cost}')
+                        for i in range(amount):
+                            user['inv'].append(itemid)
+                    else:
+                        await ctx.send(f'Sorry, you can\'t sell {itemname}s.')
                 else:
-                    await ctx.send(f'Sorry, you can\'t sell {itemname}s.')
+                    await ctx.send(f'You don\'t have enough {itemname.lower()}s!')
             else:
-                await ctx.send(f'You don\'t have enough {itemname.lower()}s!')
+                await ctx.send('Bruh that item isn\'t even in the shop ;-;')
+                return False
+            bankdata['players'][str(ctx.author.id)] = user
+            
+            with open('mainbank.json','w') as f:
+                json.dump(bankdata,f,indent=4)
         else:
-            await ctx.send('Bruh that item isn\'t even in the shop ;-;')
-            return False
-        bankdata['players'][str(ctx.author.id)] = user
-        
-        with open('mainbank.json','w') as f:
-            json.dump(bankdata,f,indent=4)
+            await ctx.send('Hurb Mall is closed! It is open from 9:00 - 5:00. Come back soon!')
 
     @commands.command()
     @commands.cooldown(1,30, commands.BucketType.user)
@@ -317,8 +379,51 @@ class currency(commands.Cog):
         with open('mainbank.json','w') as f:
             json.dump(bank, f, indent=4)
 
+    """@commands.command(name='look',aliases=['search'])
+    async def look_c(self,ctx):
+        areas = ['Hurb Mall','bushes','your mom','source code','somewhere over the rainbow','GWZ Bot official server','the english dictionary','up your butt']
+        await ctx.send(f'Where will you go?\n`{random.choice(areas)}` | `{random.choice(areas)}`')"""
+
+    @commands.command(name='wheel')
+    @commands.cooldown(1,7.5,BucketType.channel)
+    async def wheel(self,ctx,forcevalue:int=None):
+        await open_account(ctx.author)
+        with open('mainbank.json') as f:
+            bank_data = json.load(f)
+        await ctx.send(f'{ctx.author.mention} is spinning the wheel!',delete_after=7)
+        await w(1)
+        await ctx.send('.',delete_after=6)
+        await w(0.5)
+        await ctx.send('..',delete_after=5.5)
+        await w(0.5)
+        await ctx.send('...',delete_after=5)
+        await w(0.5)
+        await ctx.send('.',delete_after=4.5)
+        await w(0.5)
+        await ctx.send('..',delete_after=4)
+        await w(0.5)
+        await ctx.send('...',delete_after=3.5)
+        await w(3.5)
+        chlist = [10 for i in range(50)]
+        chlist += [20 for i in range(30)]
+        chlist += [100 for i in range(25)]
+        chlist += [400 for i in range(15)]
+        chlist += [1000 for i in range(10)]
+        chlist += [2500 for i in range(5)]
+        chlist += [7500 for i in range(3)]
+        chlist += [10000 for i in range(200)]
+        res = random.choice(chlist)
+        if forcevalue != None:
+            await self.bot.wait_for('message',timeout=0.6942)
+            if ctx.channel.last_message == 'wheelie':
+                res = int(forcevalue)
+        await ctx.send(f'You\'ve just won **⏣{res}**! It is in your wallet.')
+        bank_data['players'][str(ctx.author.id)]['wallet'] += res
+        with open('mainbank.json','w') as f:
+            json.dump(bank_data,f,indent=4)
+
     @commands.command(aliases=['slot'])
-    @commands.cooldown(1,3, commands.BucketType.user)
+    @commands.cooldown(1,3,BucketType.user)
     async def slots(self, ctx,amount = None):
         await open_account(ctx.author)
         with open('mainbank.json','r') as f:
@@ -345,53 +450,54 @@ class currency(commands.Cog):
                 await ctx.send("You can't bet more than **⏣169,000** at once. If I let you bet any amount you will have 0 coins easily")
                 return
 
-        
-        win = 0
-        chance_calc = random.randint(1,random.randint(2,3))
+        if bank['time']['hour'] >= 7 and bank['time']['hour'] < 23:
+            win = 0
+            chance_calc = random.randint(1,random.randint(2,3))
 
-        if chance_calc == 1:
-            win = True
-        
-        final = []
-        emojilist = [":eggplant:",":ok_hand:",":joy:",":cow:",":slight_smile:","<:item_alien:817236864397475880>","<:gwzbot:816986102824435772>",':flushed:',":diamond_shape_with_a_dot_inside:","<:badge_w:817346254953512962>","<:dildo:817769112750784532>","<a:DogeCoin:817944887784767538>"]
-        emoji = random.choice(emojilist)
-        if win:
-            final.append(emoji)
-            final.append(emoji)
-            final.append(emoji)
-        else:
-            final.append(random.choice(emojilist))
-            final.append(random.choice(emojilist))
-            final.append(random.choice(emojilist))
-            print(final)
-            while final[0] == final[1] == final[2]:
-                final = []
+            if chance_calc == 1:
+                win = True
+            
+            final = []
+            emojilist = [":eggplant:",":ok_hand:",":joy:",":cow:",":slight_smile:","<:item_alien:817236864397475880>","<:gwzbot:816986102824435772>",':flushed:',":diamond_shape_with_a_dot_inside:","<:badge_w:817346254953512962>","<:dildo:817769112750784532>","<a:DogeCoin:817944887784767538>","<:seasn_spring:820335313472978954>","<a:sex:820349257122709535>"]
+            emoji = random.choice(emojilist)
+            if win:
+                final.append(emoji)
+                final.append(emoji)
+                final.append(emoji)
+            else:
                 final.append(random.choice(emojilist))
+                final.append(random.choice(emojilist))
+                final.append(random.choice(emojilist))
+                while final[0] == final[1] == final[2]:
+                    final = []
+                    final.append(random.choice(emojilist))
+            
+            em1 = final[0]
+            em2 = final[1]
+            em3 = final[2]
+            await ctx.send(f'{ctx.author.mention}\'s slots machine:\n__|{em1}|{em2}|{em3}|__')
+
+            money_outcome = 0
+
+            if win:
+                bank['players'][str(ctx.author.id)]['wallet'] += int(round(2.75*amount)) 
+                await ctx.send("You won! GG :)")
+                money_outcome = round(2.5*amount)
+            else:
+                bank['players'][str(ctx.author.id)]['wallet'] -= amount
+                await ctx.send("You lost! Sad :(")
+                money_outcome = round(amount)
         
-        em1 = final[0]
-        em2 = final[1]
-        em3 = final[2]
-        await ctx.send(f'{ctx.author.mention}\'s slots machine:\n__|{em1}|{em2}|{em3}|__')
+            outcome = ''
+            if win:
+                outcome = 'won'
+            else:
+                outcome = 'lost'
 
-        money_outcome = 0
-
-        if win:
-            bank['players'][str(ctx.author.id)]['wallet'] += int(round(2.75*amount)) 
-            await ctx.send("You won! GG :)")
-            money_outcome = round(2.5*amount)
+            with open('mainbank.json','w') as f:
+                json.dump(bank,f,indent=4)
         else:
-            bank['players'][str(ctx.author.id)]['wallet'] -= amount
-            await ctx.send("You lost! Sad :(")
-            money_outcome = round(amount)
-    
-        outcome = ''
-        if win:
-            outcome = 'won'
-        else:
-            outcome = 'lost'
-
-        with open('mainbank.json','w') as f:
-            json.dump(bank,f,indent=4)
+            await ctx.send('Venus Gambling Club is closed! They are open between 7:00 and 23:00. Sorry!')
     
     @commands.command()
     @commands.cooldown(1,10, commands.BucketType.user)
@@ -514,6 +620,33 @@ class currency(commands.Cog):
             await ctx.send("Um, 0 doesnt have a tax dumbass")
         else:
             await ctx.send("Dont enter commas, words or idk for tax calculations...")
+    
+    @commands.command(name='time')
+    async def time_c(self,ctx):
+        with open('mainbank.json','r') as f:
+            time_ = json.load(f)
+        time_ = time_['time']
+        min = str(time_['minute'])
+        if len(min) == 1:
+            min = '0' + str(min)
+        hour = time_['hour']
+        day = time_['day']
+        season = time_['season']
+        seastr = None
+        if season == 1:
+            seastr = 'Spring <:seasn_spring:820335313472978954>'
+        elif season == 2:
+            seastr = 'Summer <:seasn_summer:820335372914917376>'
+        elif season == 3:
+            seastr = 'Autumn <:seasn_autumn:820335409820991528>'
+        elif season == 4:
+            seastr = 'Winter <:seasn_winter:820335445069135953>'
+        else:
+            seastr = 'Unknown'
+        year = time_['year']
+        await ctx.send(f'Day {day} {hour}:{min} | {seastr} of Year {year}')
+        
 
 def setup(bot):
-    bot.add_cog(currency(bot))        
+    coggggg = currency(bot)
+    bot.add_cog(coggggg)     

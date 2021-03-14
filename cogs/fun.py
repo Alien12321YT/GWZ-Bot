@@ -3,6 +3,12 @@ from discord.ext import commands
 from discord.ext.commands.cooldowns import BucketType
 import random
 import praw
+import json
+
+def isnt_ff_server(ctx):
+    with open('server.json','r') as f:
+        checkifffmode = json.load(f)
+    return not checkifffmode[str(ctx.guild.id)]['ff_mode']
 
 class fun(commands.Cog):
     def __init__(self, bot):
@@ -17,6 +23,7 @@ class fun(commands.Cog):
             await ctx.send('Try again, but this time ask a question for me to reply with stuff like yes or no')
 
     @commands.command(name='pp')
+    @commands.check(isnt_ff_server)
     async def pee_pee(self, ctx,member: discord.Member=None):
         if member == None:
             member = ctx.author
@@ -40,7 +47,17 @@ class fun(commands.Cog):
             await ctx.send("Why would you kill yourself?")
             return
 
-        kill_messages = [f'{member.name} died but nobody knows how',f'{member.name} died because God wanted them to die',f'{member.name} got killed by {ctx.author.name}',f'{member.name} died because {ctx.author.name} used the kill command',f'{member.name} drowned',f'{member.name}\'s :eggplant: became so hard that they literally died',f'{member.name} died because of smoking. Imagine smoking, that noob',f'{member.name} drank alcohol in dank memer, but instead of dying in the currency system, they somehow died irl',f'{member.name} died by std',f'{member.name} faps 69 times',f'{member.name} tried to swim in lava',f'{member.name} fell from a high place',f'{member.name} got cock and ball tortured which is a sexual activity involving application of pain or constriction to the male genitals. This may involve directly painful activities, such as wax play, genital spanking, squeezing, ball-busting, genital flogging, urethral play, tickle torture, erotic electrostimulation or even kicking.[1] The recipient of such activities may receive direct physical pleasure via masochism, or emotional pleasure through erotic humiliation, or knowledge that the play is pleasing to a sadistic dominant. Many of these practices carry significant health risks',f'{member.name} got killed by a llama','Killing someone is not good, and i\'m a good person so i won\'t kill anyone',f'{member.name} is a good person. I won\'t let anyone kill them',f'{member.name} got hit by a car',f'{member.name} got shooted by {ctx.author.name}',f'{member.name} lives in a hot place. They went to Oymyakon and died because of the cold',f'{ctx.author.name} punches {member.name} very hard in the :eggplant:',f'{member.name} tries to kill {ctx.author.name} but {ctx.author.name} pulls the reverse card',f'A bee kills {ctx.author.name}'f'{member.name} gets killed by uh... idk i ran out ofdeath messages so i\'m adding these random stuff',f'{member.name} saw a very hot woman she was so hot that {member.name} burned to death',f'ok i killed {member.name}',f'{member.name} found the nearest rope']
+        kill_messages = [f'{member.name} died but nobody knows how',f'{member.name} died because God wanted them to die',f'{member.name} got killed by {ctx.author.name}',f'{member.name} died because {ctx.author.name} used the kill command',f'{member.name} drowned',f'{member.name} died because of smoking. Imagine smoking, that noob',f'{member.name} drank alcohol in dank memer, but instead of dying in the currency system, they somehow died irl',f'{member.name} died by std',f'{member.name} faps 69 times',f'{member.name} tried to swim in lava',f'{member.name} fell from a high place',f'{member.name} got killed by a llama','Killing someone is not good, and i\'m a good person so i won\'t kill anyone',f'{member.name} is a good person. I won\'t let anyone kill them',f'{member.name} got hit by a car',f'{member.name} got shooted by {ctx.author.name}',f'{member.name} lives in a hot place. They went to Oymyakon and died because of the cold',f'{member.name} tries to kill {ctx.author.name} but {ctx.author.name} pulls the reverse card',f'A bee kills {member.name}',f'ok i killed {member.name}',f'{member.name} found the nearest rope']
+
+        if isnt_ff_server(ctx):
+            kill_messages += [f'{member.name}\'s :eggplant: became so hard that they literally died',f'{member.name} got cock and ball tortured which is a sexual activity involving application of pain or constriction to the male genitals. This may involve directly painful activities, such as wax play, genital spanking, squeezing, ball-busting, genital flogging, urethral play, tickle torture, erotic electrostimulation or even kicking.[1] The recipient of such activities may receive direct physical pleasure via masochism, or emotional pleasure through erotic humiliation, or knowledge that the play is pleasing to a sadistic dominant. Many of these practices carry significant health risks',f'{ctx.author.name} punches {member.name} very hard in the :eggplant:',f'{member.name} saw a very hot woman she was so hot that {member.name} burned to death',f'{member.name} cummed so much he drowned in it']
+        if ctx.author.guild_permissions.ban_members:
+            kill_messages.append(f'{member.name} got banned by {ctx.author.name}')
+            kill_messages.append('A player has been banned for hacking or abuse. **Thanks for reporting it!**')
+        if member.guild_permissions.ban_members:
+            kill_messages.append(f'{member.name} tried to ban {ctx.author.name}, but {ctx.author.name} had an uno-reverse-card')
+        if member.is_on_mobile():
+            kill_messages.append(f'{member.name} was hacked by {ctx.author.name} due to his stoopid phone security. Just use a computer man')
 
         random_choice = random.choice(kill_messages)
 
@@ -51,81 +68,100 @@ class fun(commands.Cog):
         result = ''
         if msg != None:
             for letter in list(msg):
+                use_emojis = True
+                code_bracket_for_emoji = False
                 letter = letter.lower()
-                if letter == 'a':
+                if letter == 'a' and use_emojis:
                     result += ':regional_indicator_a: '
-                elif letter == 'b':
+                elif letter == 'b' and use_emojis == True:
                     result += ':regional_indicator_b: '
-                elif letter == 'c':
+                elif letter == 'c' and use_emojis == True:
                     result += ':regional_indicator_c: '
-                elif letter == 'd':
+                elif letter == 'd' and use_emojis == True:
                     result += ':regional_indicator_d: '
-                elif letter == 'e':
+                elif letter == 'e' and use_emojis == True:
                     result += ':regional_indicator_e: '
-                elif letter == 'f':
+                elif letter == 'f' and use_emojis == True:
                     result += ':regional_indicator_f: '
-                elif letter == 'g':
+                elif letter == 'g' and use_emojis == True:
                     result += ':regional_indicator_g: '
-                elif letter == 'h':
+                elif letter == 'h' and use_emojis == True:
                     result += ':regional_indicator_h: '
-                elif letter == 'i':
+                elif letter == 'i' and use_emojis == True:
                     result += ':regional_indicator_i: '
-                elif letter == 'j':
+                elif letter == 'j' and use_emojis == True:
                     result += ':regional_indicator_j: '
-                elif letter == 'k':
+                elif letter == 'k' and use_emojis == True:
                     result += ':regional_indicator_k: '
-                elif letter == 'l':
+                elif letter == 'l' and use_emojis == True:
                     result += ':regional_indicator_l: '
-                elif letter == 'm':
+                elif letter == 'm' and use_emojis == True:
                     result += ':regional_indicator_m: '
-                elif letter == 'n':
+                elif letter == 'n' and use_emojis == True:
                     result += ':regional_indicator_n: '
-                elif letter == 'o':
+                elif letter == 'o' and use_emojis == True:
                     result += ':regional_indicator_o: '
-                elif letter == 'p':
+                elif letter == 'p' and use_emojis == True:
                     result += ':regional_indicator_p: '
-                elif letter == 'q':
+                elif letter == 'q' and use_emojis == True:
                     result += ':regional_indicator_q: '
-                elif letter == 'r':
+                elif letter == 'r' and use_emojis == True:
                     result += ':regional_indicator_r: '
-                elif letter == 's':
+                elif letter == 's' and use_emojis == True:
                     result += ':regional_indicator_s: '
-                elif letter == 't':
+                elif letter == 't' and use_emojis == True:
                     result += ':regional_indicator_t: '
-                elif letter == 'u':
+                elif letter == 'u' and use_emojis == True:
                     result += ':regional_indicator_u: '
-                elif letter == 'v':
+                elif letter == 'v' and use_emojis == True:
                     result += ':regional_indicator_v: '
-                elif letter == 'w':
+                elif letter == 'w' and use_emojis == True:
                     result += ':regional_indicator_w: '
-                elif letter == 'x':
+                elif letter == 'x' and use_emojis == True:
                     result += ':regional_indicator_x: '
-                elif letter == 'y':
+                elif letter == 'y' and use_emojis == True:
                     result += ':regional_indicator_y: '
-                elif letter == 'z':
+                elif letter == 'z' and use_emojis == True:
                     result += ':regional_indicator_z: '
-                elif letter == '1':
+                elif letter == '1' and use_emojis == True:
                     result += ':one:'
-                elif letter == '2':
+                elif letter == '2' and use_emojis == True:
                     result += ':two:'
-                elif letter == '3':
+                elif letter == '3' and use_emojis == True:
                     result += ':three:'
-                elif letter == '4':
+                elif letter == '4' and use_emojis == True:
                     result += ':four:'
-                elif letter == '5':
+                elif letter == '5' and use_emojis == True:
                     result += ':five:'
-                elif letter == '6':
+                elif letter == '6' and use_emojis == True:
                     result += ':six:'
-                elif letter == '7':
+                elif letter == '7' and use_emojis == True:
                     result += ':seven:'
-                elif letter == '8':
+                elif letter == '8' and use_emojis == True:
                     result += ':eight:'
-                elif letter == '9':
+                elif letter == '9' and use_emojis == True:
                     result += ':nine:'
-                elif letter == '0':
+                elif letter == '0' and use_emojis == True:
                     result += ':zero:'
-                elif letter == ' ':
+                elif letter == ' ' and use_emojis == True:
                     result += '    '
+                elif (letter == '<') and use_emojis == True:
+                    result += '<'
+                    code_bracket_for_emoji = True
+                    use_emojis = False
+                elif letter == '>' and use_emojis == False:
+                    result += '>'
+                    code_bracket_for_emoji = False
+                    use_emojis = True
+                elif letter == '`' or letter == ':':
+                    result += letter
+                    if use_emojis == True:
+                        if code_bracket_for_emoji:
+                            pass
+                        else:
+                            use_emojis = False
+                    else:
+                        use_emojis = False
                 elif letter == '\\':
                     result += '\\'
                 else:
@@ -144,6 +180,10 @@ class fun(commands.Cog):
             await ctx.send('​')
         else:
             await ctx.send(str(msg[::-1]))
+
+    @commands.command()
+    async def tim(self,ctx):
+        await ctx.send('t i m')
 
 def setup(bot):
     bot.add_cog(fun(bot))

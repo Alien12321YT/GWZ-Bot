@@ -7,11 +7,11 @@ from pingsux import up
 import json
 
 def get_prefix(client,msg):
-    with open('prefixes.json','r') as f:
+    with open('server.json','r') as f:
         p_d = json.load(f)
-    return p_d[str(msg.guild.id)]
+    return p_d[str(msg.guild.id)]['prefix']
 
-client = commands.AutoShardedBot(command_prefix=get_prefix)
+client = commands.AutoShardedBot(command_prefix=get_prefix,intents=discord.Intents.all())
 
 client.remove_command("help")
 
@@ -37,7 +37,7 @@ async def on_shard_connect(sid):
 
 
 @client.event
-async def on_disconnect(sid):
+async def on_shard_disconnect(sid):
     print(f'Shard #{sid} has disconnected.')
 
 
@@ -57,9 +57,13 @@ async def on_guild_join(g):
         invite_channel = g.rules_channel
     invite_code = str(await invite_channel.create_invite(max_age=90))
     await client.get_guild(816957294218182707).get_channel(816975581530816553).send(f'I have just joined {g.name}, here\'s an invite!\n{invite_code}\nGuild #{len(client.guilds)}')
-    with open('prefixes.json','r') as f:
+    with open('server.json','r') as f:
         p_d = json.load(f)
-    p_d[str(g.id)] = '^'
+    p_d[str(g.id)] = {}
+    p_d[str(g.id)]['ff_mode'] = False
+    p_d[str(g.id)]['prefix'] = '^'
+    with open('server.json','w') as f:
+        json.dump(p_d,f,indent=4)
 
 @client.group(invoke_without_command=True)
 async def help(ctx):
@@ -140,7 +144,7 @@ async def copyme(ctx, *, thing: str):
 @commands.check(is_it_authors)
 @client.command()
 async def reset_those_prefixes_or_else_we_all_die_because_of_you(ctx):
-    with open('prefixes.json') as f:
+    with open('server.json') as f:
         prefix_data = json.load(f)
     await ctx.send('Are you sure?')
     def check(m):
@@ -153,13 +157,13 @@ async def reset_those_prefixes_or_else_we_all_die_because_of_you(ctx):
         await ctx.send('Resetting all prefixes on all servers...')
         guild_count = 0
         for guild in client.guilds:
-            prefix_data[str(guild.id)] = '^'
+            prefix_data[str(guild.id)] = {"ff_mode": False,"prefix":'^'}
             guild_count += 1
             if guild_count % 10 == 0:
                 print(f'Reset {guild_count} prefixes...')
         await ctx.send(f'Reset prefixes on {guild_count} servers. You have annoyed lots of ppl good job :).')
         print(f'Reset all {guild_count} prefixes.')
-        with open('prefixes.json','w') as f:
+        with open('server.json','w') as f:
             json.dump(prefix_data,f,indent=4)
     else:
         return
@@ -184,7 +188,7 @@ async def currency(ctx):
     embed.add_field(
         name="Currency commands",
         value=
-        "balance, inventory, withdraw, deposit, beg, give, shop, buy, sell, slots, guessnumber, countup"
+        "balance, inventory, withdraw, deposit, beg, give, shop, buy, sell, slots, guessnumber, countup, wheel"
     )
 
     await ctx.send(embed=embed)
@@ -335,14 +339,14 @@ async def urban(ctx):
     await ctx.send(embed=embed)
 
 
-@help.command(aliases=['time', 'clock'])
-async def currenttime(ctx):
-    embed = discord.Embed(title="Currenttime",
+@help.command(aliases=['utctime', 'clock'])
+async def utc(ctx):
+    embed = discord.Embed(title="UTC",
                           description="Shows the current time of GMT 0",
                           color=ctx.author.color)
 
-    embed.add_field(name="**Syntax**", value="^currenttime")
-    embed.add_field(name="**Aliases**", value="time, clock")
+    embed.add_field(name="**Syntax**", value="^utc")
+    embed.add_field(name="**Aliases**", value="utctime, clock")
 
     await ctx.send(embed=embed)
 
@@ -389,9 +393,17 @@ async def moderation(ctx):
                           color=ctx.author.color)
 
     embed.add_field(name="Moderation commands",
-                    value="purge, currenttime, slowmode")
+                    value="purge, utc, slowmode, toggle")
     await ctx.send(embed=embed)
 
+@help.command(aliases=['settings','setting','tset'])
+async def toggle(ctx):
+    embed = discord.Embed(title="Toggle",
+                          description='A settings command which can toggle any mode on and off.',
+                          color=ctx.author.color)
+
+    embed.add_field(name="**Syntax**", value = "^toggle <mode>/^toggle list")
+    embed.add_field(name = "**Aliases**", value = "settings,setting,tset")
 
 @help.command()
 async def math(ctx):
@@ -400,9 +412,27 @@ async def math(ctx):
                           color=ctx.author.color)
 
     embed.add_field(name="Math commands",
-                    value="add, subtract, multiply, divide, modulo, isprime")
+                    value="add, subtract, multiply, divide, modulo, isprime, squareroot, repr")
 
     await ctx.send(embed=embed)
+
+@help.command()
+async def repr(ctx):
+    embed = discord.Embed(title="Repr",
+                          description='Reprint a number in a form. Type "b" at the end for binary, "h" for hexadecimal, etc.',
+                          color=ctx.author.color)
+
+    embed.add_field(name="**Syntax**", value = "repr <number> <form>")
+
+
+@help.command(aliases=['sqrt'])
+async def squareroot(ctx):
+    embed = discord.Embed(title="Squareroot",
+                          description="Squareroot a number",
+                          color=ctx.author.color)
+
+    embed.add_field(name="**Syntax**", value="^squareroot <number>")
+    embed.add_field(name="**Aliases**", value = "sqrt")
 
 
 @help.command()
@@ -505,6 +535,19 @@ async def balance(ctx):
         title="Balance",
         description=
         "Check your balance/how much money you have in the currency system.",
+        color=ctx.author.color)
+
+    embed.add_field(name="**Syntax**", value="^balance")
+    embed.add_field(name="**Aliases**", value="bal")
+
+    await ctx.send(embed=embed)
+
+@help.command()
+async def wheel(ctx):
+    embed = discord.Embed(
+        title="Wheel",
+        description=
+        "Spin the wheel and get 10k coins. You can also get 7500, 2500, 1000, 400, 100, 20 and 10 but they are rare.",
         color=ctx.author.color)
 
     embed.add_field(name="**Syntax**", value="^balance")
@@ -755,25 +798,28 @@ async def deletechannel(ctx):
     await ctx.send(embed=embed)
 
 
+
+
+
 @help.command(aliases=['inv'])
 async def inventory(ctx):
     embed = discord.Embed(
         title="Inventory",
         description="Check what items you have in your inventory.",
         color=ctx.author.color)
-
     embed.add_field(name="**Syntax**", value="^inventory <amount>")
     embed.add_field(name="**Aliases**", value="inv")
 
     await ctx.send(embed=embed)
 
-@client.command(aliases=['shit', 'sex'])
-async def cum(ctx, a:int=1, b:int=100) :
-    await ctx.send(f'U rubbed your nice little ***** and sprayed out {str(random.randint(int(a), int(b)))} ml of white stuff')
+@client.command()
+@commands.check(is_it_authors)
+async def alien_time(ctx):
+    dt = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=7)))
+    await ctx.send(f'{dt.day}/{dt.month}/{dt.year} | {dt.hour}:{dt.minute}:{dt.second}.{round(dt.microsecond/10000)}')
 
 extensions = [
-    'cogs.currency', 'cogs.fun', 'cogs.math', 'cogs.moderation', 'cogs.server',
-    'cogs.info'
+    'cogs.currency', 'cogs.fun', 'cogs.math', 'cogs.moderation', 'cogs.server','cogs.info','cogs.nff'
 ]
 
 if __name__ == '__main__':
