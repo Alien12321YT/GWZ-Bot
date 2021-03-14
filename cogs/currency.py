@@ -229,7 +229,9 @@ class currency(commands.Cog):
                 itemid = itemfound['id']
                 itemname = itemfound['name_s']
                 if user['inv'].count(itemfound) <= amount:
-                    if itemfound['sellable'] == True:
+                    if itemfound['sellable'] == True or itemid == 'dorito_leaf':
+                        if itemid == 'doritoleaf':
+                            cost = 75
                         user['wallet'] += cost
                         await ctx.send(f'You\'ve sold {amount} {itemname}(s) for ⏣{cost}')
                         await ctx.bot.get_guild(811547367979221042).get_channel(811583394033958943).send(f'{ctx.author.mention} has sold {amount} {itemname} for ⏣{cost}')
@@ -383,6 +385,21 @@ class currency(commands.Cog):
     async def look_c(self,ctx):
         areas = ['Hurb Mall','bushes','your mom','source code','somewhere over the rainbow','GWZ Bot official server','the english dictionary','up your butt']
         await ctx.send(f'Where will you go?\n`{random.choice(areas)}` | `{random.choice(areas)}`')"""
+
+    @commands.command()
+    async def rakeleaves(self,ctx):
+        bank = await get_bank_data()
+        if bank['time']['season'] == 3:
+            paid_mon = random.randint(200,569)
+            leaves = random.randint(5,45)
+            await ctx.send(f'You earned \u23E3{paid_mon}! You also earned {leaves} Dorito Leaves.')
+            for i in range(leaves):
+                bank['players'][str(ctx.author.id)]['inv'].append('dorito_leaf')
+            bank['players'][str(ctx.author.id)]['bank'] += paid_mon
+            with open('mainbank.json','w') as f:
+                json.dump(bank,f,indent=4)
+        else:
+            await ctx.send('This command can only be used during Autumn season of the currency system!')
 
     @commands.command(name='wheel')
     @commands.cooldown(1,7.5,BucketType.channel)

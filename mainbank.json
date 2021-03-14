@@ -213,6 +213,15 @@
             "description": "If you win a gambling game three times straight you will get this badge.",
             "sellable": false,
             "viewable": true
+        },
+        {
+            "name": "Dorito Leaf <:badge_winner:814145557957312512>",
+            "name_s": "Dorito Leaf",
+            "id": "dorito_leaf",
+            "price": null,
+            "description": "The strange BBQ leaf that you occasionally find when raking leaves.",
+            "sellable": true,
+            "viewable": true
         }
     ],
     "other": {
@@ -222,10 +231,10 @@
         "countup": 101
     },
     "time": {
-        "minute": 2,
-        "hour": 5,
-        "day": 3,
-        "season": 2,
+        "minute": 32,
+        "hour": 19,
+        "day": 10,
+        "season": 3,
         "year": 1
     }
 }

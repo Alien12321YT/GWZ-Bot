@@ -5,29 +5,14 @@ import os
 import random
 from pingsux import up
 import json
+import asyncio
 
-def get_prefix(client,msg):
-    with open('server.json','r') as f:
-        p_d = json.load(f)
-    try:
-        return p_d[str(msg.guild.id)]['prefix']
-    except:
-        return '^'
-        print('ExceptReturn')
-
-client = commands.AutoShardedBot(command_prefix=get_prefix,intents=discord.Intents.all())
+client = commands.AutoShardedBot(command_prefix='^')
 
 client.remove_command("help")
 
 def is_it_authors(ctx):
     return ctx.message.author.id == 718109447825915946 or ctx.message.author.id == 692250820741300266 or ctx.message.author.id == 768674429819027456
-
-
-@client.command()
-@commands.check(is_it_authors)
-async def only_for_me(ctx):
-    await ctx.send('I know you!')
-
 
 @client.event
 async def on_ready():
@@ -53,6 +38,14 @@ async def on_command_error(ctx, exception):
         color=0xff0609)
     await ctx.send(embed=embed)
     raise exception
+
+@client.event
+async def on_message(msg):
+    if msg.author.id == 692250820741300266 and ("bruh" in msg.clean_content or "hurb" in msg.clean_content):
+        message_sent = msg.channel.send('<@!692250820741300266> Don\'t say `bruh`!')
+        await asyncio.sleep(20)
+        await message_sent.delete()
+    await client.process_commands()
 
 @client.event
 async def on_guild_join(g):
@@ -192,11 +185,25 @@ async def currency(ctx):
     embed.add_field(
         name="Currency commands",
         value=
-        "balance, inventory, withdraw, deposit, beg, give, shop, buy, sell, slots, guessnumber, countup, wheel"
+        "balance, inventory, withdraw, deposit, beg, give, shop, buy, sell, slots, guessnumber, countup, wheel, time"
     )
 
     await ctx.send(embed=embed)
 
+@help.command()
+async def time(ctx):
+
+    embed = discord.Embed(title="Time",
+                          description="There are seasons in the currency system. And this command shows the current time of the current season",
+                          color=ctx.author.color)
+
+    embed.add_field(
+        name="**Syntax**",
+        value=
+        "^time"
+    )
+
+    await ctx.send(embed=embed)
 
 @help.command()
 async def info(ctx):
