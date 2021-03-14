@@ -9,7 +9,11 @@ import json
 def get_prefix(client,msg):
     with open('server.json','r') as f:
         p_d = json.load(f)
-    return p_d[str(msg.guild.id)]['prefix']
+    try:
+        return p_d[str(msg.guild.id)]['prefix']
+    except:
+        return '^'
+        print('ExceptReturn')
 
 client = commands.AutoShardedBot(command_prefix=get_prefix,intents=discord.Intents.all())
 
