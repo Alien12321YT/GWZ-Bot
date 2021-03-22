@@ -22,7 +22,7 @@ async def update_time(bot):
     if time_['time']['hour'] >= 24:
         time_['time']['day'] += 1
         time_['time']['hour'] = 0
-    if time_['time']['day'] > 40: 
+    if time_['time']['day'] > 12: 
         time_['time']['season'] += 1
         time_['time']['day'] = 0
     if time_['time']['season'] >= 4:
@@ -163,8 +163,8 @@ class currency(commands.Cog):
             amount = 0
             littler = True
         bankdata = await get_bank_data()
-        if bankdata['time']['hour'] >= 9 and bankdata['time']['hour'] < 17:
-            user = await open_account(ctx.author)
+        if bankdata['time']['hour'] >= 7 and bankdata['time']['hour'] < 17:
+            user = bankdata['players'][str(ctx.author.id)]
             items = bankdata['shop']
             itemids = []
             itemfound = None
@@ -181,7 +181,7 @@ class currency(commands.Cog):
                     if i['id'] == item:
                         itemfound = i
                 itemname = itemfound['name_s']
-                if itemfound['price'] == None:
+                if itemfound['price'] == None or itemfound['buyable'] == False:
                     await ctx.send(f'You can\'t buy {itemname}!')
                     return
                 cost = itemfound['price'] * amount
@@ -206,14 +206,14 @@ class currency(commands.Cog):
             with open('mainbank.json','w') as f:
                 json.dump(bankdata,f,indent=4)
         else:
-            await ctx.send('Hurb Mall is closed! It is open from 9:00 - 5:00. Come back soon!')
+            await ctx.send('GWZ Shop is closed! It is open from 7:00 - 17:00 in a day of a season in the currency system. Do `^time` to see the time. Come back soon!')
 
     @commands.command()
     async def sell(self, ctx,item:str='',amount:int=1):
         await open_account(ctx.author)
         bankdata = await get_bank_data()
-        if bankdata['time']['hour'] >= 9 and bankdata['time']['hour'] < 17:
-            user = await open_account(ctx.author)
+        if bankdata['time']['hour'] >= 7 and bankdata['time']['hour'] < 17:
+            
             items = bankdata['shop']
             itemids = []
             itemfound = None
@@ -228,15 +228,13 @@ class currency(commands.Cog):
                 cost = round((itemfound['price'] * amount) * (2/3))
                 itemid = itemfound['id']
                 itemname = itemfound['name_s']
-                if user['inv'].count(itemfound) <= amount:
-                    if itemfound['sellable'] == True or itemid == 'dorito_leaf':
-                        if itemid == 'doritoleaf':
-                            cost = 75
-                        user['wallet'] += cost
+                if bankdata['players'][str(ctx.author.id)]['inv'].count(itemfound['id']) <= amount:
+                    if itemfound['sellable'] == True:
+                        bankdata['players'][str(ctx.author.id)]['wallet'] += cost
                         await ctx.send(f'You\'ve sold {amount} {itemname}(s) for ⏣{cost}')
                         await ctx.bot.get_guild(811547367979221042).get_channel(811583394033958943).send(f'{ctx.author.mention} has sold {amount} {itemname} for ⏣{cost}')
                         for i in range(amount):
-                            user['inv'].append(itemid)
+                            bankdata['players'][str(ctx.author.id)]['inv'].append(itemid)
                     else:
                         await ctx.send(f'Sorry, you can\'t sell {itemname}s.')
                 else:
@@ -244,12 +242,11 @@ class currency(commands.Cog):
             else:
                 await ctx.send('Bruh that item isn\'t even in the shop ;-;')
                 return False
-            bankdata['players'][str(ctx.author.id)] = user
             
             with open('mainbank.json','w') as f:
                 json.dump(bankdata,f,indent=4)
         else:
-            await ctx.send('Hurb Mall is closed! It is open from 9:00 - 5:00. Come back soon!')
+            await ctx.send('GWZ Shop is closed! It is open from 7:00 am - 5:00 pm in a day of a season in the currency system. Do `^time` to see the time. Come back soon!')
 
     @commands.command()
     @commands.cooldown(1,30, commands.BucketType.user)
@@ -391,8 +388,8 @@ class currency(commands.Cog):
         bank = await get_bank_data()
         if bank['time']['season'] == 3:
             paid_mon = random.randint(200,569)
-            leaves = random.randint(5,45)
-            await ctx.send(f'You earned \u23E3{paid_mon}! You also earned {leaves} Dorito Leaves.')
+            leaves = random.randint(5,14)
+            await ctx.send(f'You earned **\u23E3{paid_mon}**! You also earned {leaves} Dorito Leaves <:item_doritoleaf:820570720031211593>.')
             for i in range(leaves):
                 bank['players'][str(ctx.author.id)]['inv'].append('dorito_leaf')
             bank['players'][str(ctx.author.id)]['bank'] += paid_mon
@@ -421,20 +418,20 @@ class currency(commands.Cog):
         await w(0.5)
         await ctx.send('...',delete_after=3.5)
         await w(3.5)
-        chlist = [10 for i in range(50)]
-        chlist += [20 for i in range(30)]
-        chlist += [100 for i in range(25)]
-        chlist += [400 for i in range(15)]
-        chlist += [1000 for i in range(10)]
-        chlist += [2500 for i in range(5)]
-        chlist += [7500 for i in range(3)]
-        chlist += [10000 for i in range(200)]
+        chlist = [100 for i in range(50)]
+        chlist += [200 for i in range(30)]
+        chlist += [1000 for i in range(25)]
+        chlist += [4000 for i in range(15)]
+        chlist += [10000 for i in range(10)]
+        chlist += [25000 for i in range(5)]
+        chlist += [75000 for i in range(3)]
+        chlist += [100000 for i in range(2)]
         res = random.choice(chlist)
         if forcevalue != None:
             await self.bot.wait_for('message',timeout=0.6942)
             if ctx.channel.last_message == 'wheelie':
                 res = int(forcevalue)
-        await ctx.send(f'You\'ve just won **⏣{res}**! It is in your wallet.')
+        await ctx.send(f'{ctx.author.mention} You\'ve just won **⏣{res}**! It is in your wallet.')
         bank_data['players'][str(ctx.author.id)]['wallet'] += res
         with open('mainbank.json','w') as f:
             json.dump(bank_data,f,indent=4)
@@ -475,7 +472,7 @@ class currency(commands.Cog):
                 win = True
             
             final = []
-            emojilist = [":eggplant:",":ok_hand:",":joy:",":cow:",":slight_smile:","<:item_alien:817236864397475880>","<:gwzbot:816986102824435772>",':flushed:',":diamond_shape_with_a_dot_inside:","<:badge_w:817346254953512962>","<:dildo:817769112750784532>","<a:DogeCoin:817944887784767538>","<:seasn_spring:820335313472978954>","<a:sex:820349257122709535>"]
+            emojilist = [":eggplant:",":ok_hand:",":joy:",":cow:",":slight_smile:","<:item_alien:817236864397475880>","<:gwzbot:816986102824435772>",':flushed:',":diamond_shape_with_a_dot_inside:","<:badge_w:817346254953512962>","<:dildo:817769112750784532>","<a:DogeCoin:817944887784767538>","<:seasn_spring:820335313472978954>","<a:sex:817345618938560512>"]
             emoji = random.choice(emojilist)
             if win:
                 final.append(emoji)
@@ -514,7 +511,7 @@ class currency(commands.Cog):
             with open('mainbank.json','w') as f:
                 json.dump(bank,f,indent=4)
         else:
-            await ctx.send('Venus Gambling Club is closed! They are open between 7:00 and 23:00. Sorry!')
+            await ctx.send('Venus Gambling Club is closed! They are open between 7:00 and 23:00 in a day of a season in the currency system. Do `^time` to see the time. Come back soon!.')
     
     @commands.command()
     @commands.cooldown(1,10, commands.BucketType.user)

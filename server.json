@@ -1,4 +1,7 @@
 {
+    "defserver": {
+        "ff_mode": false
+    },
     "816250997293973526": {
         "ff_mode": false,
         "prefix": "^"
@@ -196,6 +199,22 @@
         "prefix": "^"
     },
     "794792303071068163": {
+        "ff_mode": false,
+        "prefix": "^"
+    },
+    "799659636336492545": {
+        "ff_mode": false,
+        "prefix": "^"
+    },
+    "728586685796843541": {
+        "ff_mode": false,
+        "prefix": "^"
+    },
+    "821683576952586272": {
+        "ff_mode": true,
+        "prefix": "^"
+    },
+    "819618743436443649": {
         "ff_mode": false,
         "prefix": "^"
     }

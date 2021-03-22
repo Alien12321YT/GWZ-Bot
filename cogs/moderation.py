@@ -39,6 +39,7 @@ class moderation(commands.Cog):
         await channel.edit(slowmode_delay=delay_in_sec)
         await ctx.channel.send(f'{channel.mention} now has {delay_in_sec} seconds of slowmode.')
 
+    @commands.has_guild_permissions(administrator=True)
     @commands.command(name='toggle',aliases=['settings','setting','tset'])
     async def toggle_command(self,ctx,setting:str=None):
         with open('server.json','r') as f:

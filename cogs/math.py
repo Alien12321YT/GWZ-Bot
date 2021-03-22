@@ -11,7 +11,7 @@ class Math(commands.Cog):
     async def add(self,ctx,*args):
         num = 0
         for arg in args:
-            num += int(arg)
+            num += float(arg)
         coolstr = f'{args[0]}'
         for arg in args[1:]:
             coolstr += f' + {arg} '

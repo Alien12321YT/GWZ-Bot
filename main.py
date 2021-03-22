@@ -7,7 +7,15 @@ from pingsux import up
 import json
 import asyncio
 
-client = commands.AutoShardedBot(command_prefix='^')
+def get_prefix(client,msg):
+    with open('server.json','r') as f:
+        p_d = json.load(f)
+    try:
+        return p_d[str(msg.guild.id)]['prefix']
+    except KeyError:
+        return '^'
+
+client = commands.AutoShardedBot(command_prefix=get_prefix,intents=discord.Intents.all())
 
 client.remove_command("help")
 
@@ -29,6 +37,8 @@ async def on_shard_connect(sid):
 async def on_shard_disconnect(sid):
     print(f'Shard #{sid} has disconnected.')
 
+class GWZError(Exception):
+    pass
 
 @client.event
 async def on_command_error(ctx, exception):
@@ -39,13 +49,18 @@ async def on_command_error(ctx, exception):
     await ctx.send(embed=embed)
     raise exception
 
+@commands.check(is_it_authors)
+@client.command()
+async def error(ctx):
+    await on_command_error(ctx,GWZError(f'{ctx.author.mention} asked for an error.'))
+
 @client.event
 async def on_message(msg):
-    if msg.author.id == 692250820741300266 and ("bruh" in msg.clean_content or "hurb" in msg.clean_content):
+    if msg.author.id == 692250820741300266 and ("bruh" in msg.content or "hurb" in msg.content):
         message_sent = msg.channel.send('<@!692250820741300266> Don\'t say `bruh`!')
         await asyncio.sleep(20)
         await message_sent.delete()
-    await client.process_commands()
+    await client.process_commands(msg) 
 
 @client.event
 async def on_guild_join(g):
@@ -75,7 +90,8 @@ async def help(ctx):
     embed.add_field(name="Moderation", value="^help moderation", inline=False)
     embed.add_field(name="Math", value="^help math", inline=False)
     embed.add_field(name="Server", value="^help server", inline=False)
-    embed.add_field(name="Info", value="^help info")
+    embed.add_field(name="Info", value="^help info", inline = False)
+    embed.add_field(name="Non Family Friendly", value = "^help nff", inline = False)
     embed.add_field(name="Other", value="^help other", inline=False)
     embed.add_field(name = "Links", value = "[Invite me](https://discord.com/api/oauth2/authorize?client_id=797693868652363827&permissions=8&scope=bot) [-](https://youtu.be/dQw4w9WgXcQ) [Official Server](https://discord.gg/bB2GNXK2dE)", inline = False)
     embed.add_field(name = "Vote links", value = "[top.gg](https://top.gg/bot/797693868652363827/vote) [-](https://youtu.be/dQw4w9WgXcQ) [Discord Boats](https://discord.boats/bot/797693868652363827/vote) [-](https://youtu.be/dQw4w9WgXcQ) [Discord Bot List](https://discordbotlist.com/bots/gwz-bot/upvote)", inline = False)
@@ -154,7 +170,8 @@ async def reset_those_prefixes_or_else_we_all_die_because_of_you(ctx):
         await ctx.send('Resetting all prefixes on all servers...')
         guild_count = 0
         for guild in client.guilds:
-            prefix_data[str(guild.id)] = {"ff_mode": False,"prefix":'^'}
+            prefix_data[str(guild.id)] = prefix_data['defserver']
+            prefix_data[str(guild.id)]['prefix'] = '^'
             guild_count += 1
             if guild_count % 10 == 0:
                 print(f'Reset {guild_count} prefixes...')
@@ -185,7 +202,49 @@ async def currency(ctx):
     embed.add_field(
         name="Currency commands",
         value=
-        "balance, inventory, withdraw, deposit, beg, give, shop, buy, sell, slots, guessnumber, countup, wheel, time"
+        "balance, inventory, withdraw, deposit, beg, give, shop, buy, sell, slots, guessnumber, countup, wheel, time, rakeleaves"
+    )
+
+    await ctx.send(embed=embed)
+
+@help.command(aliases=['non_family_friendly'])
+async def nff(ctx):
+
+    embed = discord.Embed(title="Non Family Friendly",
+                          description="The completely non family friendly commands of this bot (People with admin perms can disable this by turning on family friendly mode by doing `^toggle ff_mode` if it's disabled.)",
+                          color=ctx.author.color)
+
+    embed.add_field(
+        name="Non family friendly commands",
+        value=
+        "cum"
+    )
+
+    await ctx.send(embed=embed)
+
+@help.command(aliases=['jerkoff'])
+async def cum(ctx):
+
+    embed = discord.Embed(title="Cum",
+                          description="Cum (This is a completely non family friendly command so admins can do `^toggle ff_mode` to turn on family friendly mode if it's disabled.)",
+                          color=ctx.author.color)
+
+    embed.add_field(name="**Syntax**", value="^cum")
+    embed.add_field(name="**Aliases**", value = "jerkoff")
+
+    await ctx.send(embed=embed)
+
+@help.command()
+async def rakeleaves(ctx):
+
+    embed = discord.Embed(title="Rakeleaves",
+                          description="There are seasons in the currency system. This command can only be ran in the autumn season of this bot. If you run this command that time you get some coins and dorito leaves.",
+                          color=ctx.author.color)
+
+    embed.add_field(
+        name="**Syntax**",
+        value=
+        "^rakeleaves"
     )
 
     await ctx.send(embed=embed)
@@ -558,11 +617,10 @@ async def wheel(ctx):
     embed = discord.Embed(
         title="Wheel",
         description=
-        "Spin the wheel and get 10k coins. You can also get 7500, 2500, 1000, 400, 100, 20 and 10 but they are rare.",
+        "Spin the wheel and get 100, 200, 1000, 4000, 10000, 25000, 75000 or even 100000. Lower numbers of coins are common and higher numbers of coins are rare.",
         color=ctx.author.color)
 
-    embed.add_field(name="**Syntax**", value="^balance")
-    embed.add_field(name="**Aliases**", value="bal")
+    embed.add_field(name="**Syntax**", value="^wheel")
 
     await ctx.send(embed=embed)
 
