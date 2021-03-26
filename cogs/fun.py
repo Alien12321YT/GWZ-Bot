@@ -2,8 +2,29 @@ import discord
 from discord.ext import commands
 from discord.ext.commands.cooldowns import BucketType
 import random
-import praw
+import datetime
+import requests
 import json
+import os
+
+def convert_unix_timestamp(time):
+    return datetime.datetime.fromtimestamp(int(time//1000)).strftime('%b %d, %Y | %I:%M %p')
+
+def true_rank(rank):
+    if rank == "NORMAL":
+        return 'No rank'
+    elif rank == "VIP":
+        return 'VIP'
+    elif rank == "VIP_PLUS":
+        return 'VIP+'
+    elif rank == "MVP":
+        return 'MVP'
+    elif rank == "MVP_PLUS":
+        return 'MVP+'
+    elif rank == "MVP_PLUS_PLUS" or rank == "SUPERSTAR":
+        return 'MVP++'
+    else:
+        return 'No rank'
 
 def isnt_ff_server(ctx):
     with open('server.json','r') as f:
@@ -34,11 +55,29 @@ class fun(commands.Cog):
             title = '{}\'s pp'.format(member.name),
             description = full_pp,
             color =0xfefefe
-            )
+        )
+        await ctx.send(embed=embed)
+
+    @commands.command(name='apod')
+    @commands.cooldown(1,30,BucketType.guild)
+    async def apod_c(self,ctx):
+        apikey = os.getenv('NASA')
+        date_ = datetime.datetime.now().strftime('%Y-%m-%d')
+        parameters = {
+            "api_key": apikey,
+            "date": date_,
+            "hd": True,
+            "thumbs": True
+        }
+        res_json = requests.get('https://api.nasa.gov/planetary/apod',params=parameters).json()
+        embed = discord.Embed(
+            title=res_json['title'],
+            description=res_json['explanation']+'\n\n[Go to the official APOD website to see!](https://apod.nasa.gov/apod/astropix.html)')
+        embed.set_image(url=str(res_json['url']))
         await ctx.send(embed=embed)
 
     @commands.command()
-    @commands.cooldown(1, 2, commands.BucketType.user)
+    @commands.cooldown(1, 2, BucketType.user)
     async def kill(self, ctx, member: discord.Member=None):
         if member == None:
             await ctx.send("Mention someone to kill.")
@@ -184,6 +223,8 @@ class fun(commands.Cog):
     @commands.command()
     async def tim(self,ctx):
         await ctx.send('t i m')
+    
+    
 
 def setup(bot):
     bot.add_cog(fun(bot))

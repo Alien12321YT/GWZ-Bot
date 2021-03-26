@@ -31,7 +31,7 @@ class Server_Info(commands.Cog):
 
     @commands.command()
     async def memberinfo(self,ctx,member:discord.Member=None):
-        if member != None:
+        if discord.Member != None:
             embed = discord.Embed(
                 title='Member: **{}**'.format(member.display_name),
                 color=ctx.author.color
@@ -41,12 +41,9 @@ class Server_Info(commands.Cog):
             embed.add_field(name='Guild Join Date',value=member.joined_at.strftime('%b %d, %Y | %I:%M %p'))
             embed.add_field(name='ID',value=member.id)
             await ctx.send(embed=embed)
-        else:
-            await ctx.send('Ummm, how do I check stats on `/DisPixel/ForkAndKnifeDiscordBot#main.py.NoneType.null:0`?')
 
     @commands.command()
     async def roleinfo(self,ctx,role:discord.Role=None):
-        if role != None:
             embed = discord.Embed(
                 title='Role: **{}**'.format(role.name),
                 color=ctx.author.color
@@ -56,8 +53,6 @@ class Server_Info(commands.Cog):
             embed.add_field(name='Time Created',value=role.created_at.strftime('%b %d, %Y | %I:%M %p'))
             embed.add_field(name='ID',value=str(role.id))
             await ctx.send(embed=embed)
-        else:
-            await ctx.send('An error has occured.')
 
     @commands.command(aliases=['serverinfo'])
     async def guildinfo(self,ctx):
@@ -82,7 +77,6 @@ class Server_Info(commands.Cog):
 
     @commands.command()
     async def channelinfo(self,ctx,channel:discord.TextChannel=None):
-        if channel != None:
             embed = discord.Embed(
                 title='Channel: **{}**'.format(channel.name),
                 color=ctx.author.color
@@ -91,9 +85,6 @@ class Server_Info(commands.Cog):
             embed.add_field(name='Time Created',value=channel.created_at.strftime('%b %d, %Y | %I:%M %p'))
             embed.add_field(name='ID',value=str(channel.id))
             await ctx.send(embed=embed)
-            embed.add_field(name='Last Message',value=str(channel.last_message.content))
-        else:
-            await ctx.send('An error has occured.')
 
 def setup(bot):
     bot.add_cog(Server_Info(bot))

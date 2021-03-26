@@ -460,8 +460,8 @@ class currency(commands.Cog):
         if amount<100:
                 await ctx.send("You can't bet less than 100 coins")
                 return
-        if amount>169000:
-                await ctx.send("You can't bet more than **⏣169,000** at once. If I let you bet any amount you will have 0 coins easily")
+        if amount>69420:
+                await ctx.send("You can't bet more than **⏣69,420** at once. If I let you bet any amount you will have 0 coins easily")
                 return
 
         if bank['time']['hour'] >= 7 and bank['time']['hour'] < 23:
@@ -577,7 +577,8 @@ class currency(commands.Cog):
 
     @commands.command()
     @commands.check(only_authors)
-    async def setmoney(self, ctx, player: discord.User, amount: int, mode:str='wallet'):
+    async def setmoney(self, ctx, player: discord.Member, amount: int, mode:str='wallet'):
+        await open_account(player)
         with open('mainbank.json','r')as f:
             bank_data = json.load(f)
         if mode == 'bank' or mode == 'b':
@@ -660,6 +661,7 @@ class currency(commands.Cog):
         year = time_['year']
         await ctx.send(f'Day {day} {hour}:{min} | {seastr} of Year {year}')
         
+
 
 def setup(bot):
     coggggg = currency(bot)

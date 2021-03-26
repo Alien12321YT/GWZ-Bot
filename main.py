@@ -60,6 +60,19 @@ async def on_message(msg):
         message_sent = msg.channel.send('<@!692250820741300266> Don\'t say `bruh`!')
         await asyncio.sleep(20)
         await message_sent.delete()
+    if 'mee6' in msg.clean_content.lower() and not ('cringe' in msg.clean_content) and msg.author != client.user and msg.author.bot == False:
+        await msg.channel.send('NOOOOOO')
+        await msg.channel.send('WHY DID YOU SAY THE M WORD')
+        await msg.channel.send('NOOOOOOO BANNNNNN')
+        await msg.channel.send('MEE6 NOOOOOO')
+        await msg.channel.send('GET HIM OUT')
+        await msg.channel.send('KILL HIM')
+        await msg.channel.send('OMGGGGGGGG NOOOOOOOO')
+        await msg.channel.send('NOOOOOO :police_car: :red_square: :police_car: :red_square:')
+        await msg.channel.send('<:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521>')
+        if msg.guild.id == 816957294218182707:
+            await msg.channel.send('<@!725600926509039688> <@!737317764770955275> GET HIMMMMMMMM <:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521>')
+        await msg.author.send("<:no_mee6:818017749036564521>")
     await client.process_commands(msg) 
 
 @client.event
@@ -329,6 +342,15 @@ async def memberinfo(ctx):
 
     await ctx.send(embed=embed)
 
+@help.command()
+async def hypixel(ctx):
+    embed = discord.Embed(title="Hypixel",
+                          description="Using the Hypixel API, we can see your Minecraft stats!",
+                          color=ctx.author.color)
+
+    embed.add_field(name="**Syntax**", value="^hypixel <name> [game] [page]")
+
+    await ctx.send(embed=embed)
 
 @help.command()
 async def roleinfo(ctx):
@@ -451,7 +473,7 @@ async def fun(ctx):
                           color=ctx.author.color)
 
     embed.add_field(name="Fun commands",
-                    value="8ball, pp, kill, emojify, powerof2")
+                    value="8ball, pp, kill, emojify, powerof2, urban, apod, hypixel")
 
     await ctx.send(embed=embed)
 
@@ -580,7 +602,7 @@ async def countup(ctx):
     embed = discord.Embed(
         title="Countup",
         description=
-        "Countup to 100 and you win 10k coins. You must be the one who counted up to 100. I actually can't explain correctly cuz my friend made this command not the real owner aka me.",
+        "You get 10k coins each time you count up 100 times. Example if you count up to 100, you will get 10k coins, if you count up to 200, you will also get 10k coins and so on.",
         color=ctx.author.color)
 
     embed.add_field(name="**Syntax**", value="^countup")
@@ -865,10 +887,6 @@ async def deletechannel(ctx):
     embed.add_field(name="**Syntax**", value="^deletechannel <channel name>")
 
     await ctx.send(embed=embed)
-
-
-
-
 
 @help.command(aliases=['inv'])
 async def inventory(ctx):
