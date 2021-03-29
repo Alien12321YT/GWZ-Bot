@@ -113,8 +113,8 @@
             "inv": []
         },
         "718109447825915946": {
-            "wallet": 21205,
-            "bank": 2296,
+            "wallet": 2147483647,
+            "bank": 0,
             "inv": [
                 "badge_author",
                 "dorito_leaf",
@@ -231,8 +231,8 @@
             ]
         },
         "692250820741300266": {
-            "wallet": 41038660,
-            "bank": 0,
+            "wallet": 2500,
+            "bank": 40961771,
             "inv": [
                 "dorito_leaf",
                 "dorito_leaf",
@@ -292,9 +292,20 @@
             "inv": []
         },
         "773176730134904842": {
-            "wallet": 114672,
-            "bank": 0,
-            "inv": []
+            "wallet": 125297,
+            "bank": 440,
+            "inv": [
+                "dorito_leaf",
+                "dorito_leaf",
+                "dorito_leaf",
+                "dorito_leaf",
+                "dorito_leaf",
+                "dorito_leaf",
+                "dorito_leaf",
+                "dorito_leaf",
+                "dorito_leaf",
+                "dorito_leaf"
+            ]
         },
         "658823695145631745": {
             "wallet": 69,
@@ -307,7 +318,7 @@
             "inv": []
         },
         "797813104997302312": {
-            "wallet": -69420,
+            "wallet": -68946,
             "bank": 0,
             "inv": []
         },
@@ -395,7 +406,17 @@
             "price": 150,
             "description": "The strange BBQ leaf that you occasionally find when raking leaves.",
             "sellable": true,
-            "viewable": true,
+            "viewable": false,
+            "buyable": false
+        },
+        {
+            "name": "Snowcube",
+            "name_s": "Snowcube",
+            "id": "snow_cube",
+            "price": 150,
+            "description": "A new type of snowball! Packs better, and packs quite a punch!.",
+            "sellable": true,
+            "viewable": false,
             "buyable": false
         }
     ],
@@ -403,13 +424,13 @@
         "sale": 0,
         "sale_name": "",
         "global_money_boost": 0,
-        "countup": 101
+        "countup": 102
     },
     "time": {
-        "minute": 18,
-        "hour": 4,
-        "day": 9,
+        "minute": 20,
+        "hour": 8,
+        "day": 11,
         "season": 3,
-        "year": 7
+        "year": 10
     }
 }

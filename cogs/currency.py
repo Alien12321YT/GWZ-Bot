@@ -515,7 +515,7 @@ class currency(commands.Cog):
     
     @commands.command()
     @commands.cooldown(1,10, commands.BucketType.user)
-    async def guessnumber(self, ctx, amount:int = None):
+    async def guessnumber(self, ctx, amount = None):
         await open_account(ctx.author)
         with open('mainbank.json','r') as f:
             bank = json.load(f)
@@ -536,8 +536,8 @@ class currency(commands.Cog):
         if amount<100:
             await ctx.send("You can't bet less than **⏣100**")
             return
-        if amount>169000:
-            await ctx.send("You can't bet more than **⏣169,000** at once. If I let you bet any amount you will have 0 coins easily")
+        if amount>69420:
+            await ctx.send("You can't bet more than **⏣69,420** at once. If I let you bet any amount you will have 0 coins or if you're lucky you will become too rich.")
             return
             
         await ctx.send("Enter your guess between 1 to 10")
@@ -613,28 +613,77 @@ class currency(commands.Cog):
             await ctx.send(f'You just earned ⏣10000 for getting the count up to {currentcount}')
         with open('mainbank.json','w') as f:
             json.dump(count,f,indent=4)
+    
+    @commands.cooldown(1,3,BucketType.user)
+    @commands.command(aliases=['gamble'])
+    async def bet(self, ctx, amount = None):
+        await open_account(ctx.author)
+        with open('mainbank.json','r') as f:
+            bank = json.load(f)
+        if amount == None:
+            await ctx.send("Please enter the amount you want to bet ;-;")
+            return
+        bal = await update_bank(ctx.author)
+        if amount == "all":
+            amount = bal[0]
 
-    @commands.command()
-    async def danktaxcalc(self, ctx, question = None):
-        question = int(question)
-        if question == None:
-            await ctx.send("Enter a valid amount")
-        if 7125 < question >= 2300000:
-            await ctx.send(f"{question}, coins, you would have to pay", round({question} / 0.85, 0), "with a 15% tax rate")
-        elif 97001 < question >= 712500:
-            await ctx.send(f"{question}, coins, you would have to pay", round({question} / 0.92, 0), "with a 8% tax rate")
-        elif 48959 < question >= 97001:
-            await ctx.send(f"{question}, coins, you would have to pay", round({question} / 0.95, 0), "with a 5% tax rate")
-        elif 25001 < question >= 48959:
-            await ctx.send(f"{question}, coins, you would have to pay", round({question} / 0.97, 0), "with a 3% tax rate")
-        elif 1 < question >= 25001:
-            await ctx.send(f"{question}, coins, you would have to pay", round({question} / 0.99, 0), "with a 1% tax rate")
-        elif 0 < question >= 1:
-            await ctx.send(f"{question}, coins, You would have to pay {question}")
-        elif question == 0:
-            await ctx.send("Um, 0 doesnt have a tax dumbass")
+        amount = int(amount)
+        if amount>bal[0]:
+            await ctx.send("You don't even have that much money bruh ;-;")
+            return
+
+        if amount<0:
+            await ctx.send("What do you mean i give u money ??!?!?!?!?!?!")
+            return
+
+        if amount<100:
+            await ctx.send("You can't bet less than **⏣100**")
+            return
+
+        if amount>69420:
+            await ctx.send("You can't bet more than **⏣69,420** at once. If I let you bet any amount you will have 0 coins or if you're lucky you will become too rich.")
+            return
+
+        my_rolls = random.randint(1,6)
+        bot_rolls = random.randint(1,6)
+        color = 0x000000
+        
+        if my_rolls > bot_rolls:
+                win_or_lose = "winning"
+                win_or_lose2 = "won"
+                bank['players'][str(ctx.author.id)]['wallet'] += round(amount * 1.5)
+
+                outcome = round(amount * 1.5)
+
+                color = 0x0000ff
+        elif bot_rolls > my_rolls:
+                win_or_lose = "losing"
+                win_or_lose2 = "lost"
+                outcome = amount
+
+                bank['players'][str(ctx.author.id)]['wallet'] += round(amount * -1)
+
+                color = 0xff0000
+
         else:
-            await ctx.send("Dont enter commas, words or idk for tax calculations...")
+            win_or_lose = "tie"
+            win_or_lose2 = "lost"
+            outcome = 0 
+            color = 0x00ff00
+
+        embed = discord.Embed(
+            title = f"{ctx.author.display_name}'s {win_or_lose} gambling game", 
+            description = f"You {win_or_lose2} **⏣{outcome}**",
+            color=color
+        ) 
+
+        embed.add_field(name = f"{ctx.author.name}", value = f"`{my_rolls}`")
+        embed.add_field(name = "GWZ Bot", value = f"`{bot_rolls}`")
+
+        await ctx.send(embed=embed)
+
+        with open('mainbank.json','w') as f:
+            json.dump(bank,f,indent=4)
     
     @commands.command(name='time')
     async def time_c(self,ctx):
@@ -660,8 +709,6 @@ class currency(commands.Cog):
             seastr = 'Unknown'
         year = time_['year']
         await ctx.send(f'Day {day} {hour}:{min} | {seastr} of Year {year}')
-        
-
 
 def setup(bot):
     coggggg = currency(bot)

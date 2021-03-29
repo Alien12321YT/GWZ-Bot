@@ -1,5 +1,9 @@
 from discord.ext import commands
 import discord
+import requests
+import datetime
+import os
+from discord.ext.commands.cooldowns import BucketType
 
 class Server_Info(commands.Cog):
     def __init__(self,bot):
@@ -85,6 +89,39 @@ class Server_Info(commands.Cog):
             embed.add_field(name='Time Created',value=channel.created_at.strftime('%b %d, %Y | %I:%M %p'))
             embed.add_field(name='ID',value=str(channel.id))
             await ctx.send(embed=embed)
+
+    @commands.cooldown(1,30,BucketType.guild)
+    @commands.command(name='covid19',aliases=['covid','coronavirus','corona','covidinfo','covidi','cov','covinfo','covi'])
+    async def covid_c(self,ctx):
+        res_json = requests.get('https://covid19.mathdro.id/api').json()
+        embed=discord.Embed(
+            title='COVID-19 News <:covid:825411542223683645>',
+            description='This is the latest COVID-19 statistics, brought to you by [mathdroid\'s covid-19-api](https://github.com/mathdroid/covid-19-api).',
+            color=ctx.author.color
+        )
+        embed.add_field(name='Confirmed Cases',value=str(res_json['confirmed']['value']),inline=False)
+        embed.add_field(name='Dead Cases',value=str(res_json['deaths']['value']),inline=False)
+        tlupdtd = res_json['lastUpdate']
+        embed.set_footer(text=f'Last updated: {tlupdtd}')
+        await ctx.send(embed=embed)
+
+    @commands.command(name='apod')
+    @commands.cooldown(1,30,BucketType.guild)
+    async def apod_c(self,ctx):
+        apikey = os.getenv('NASA')
+        date_ = datetime.datetime.now().strftime('%Y-%m-%d')
+        parameters = {
+            "api_key": apikey,
+            "date": date_,
+            "hd": True,
+            "thumbs": True
+        }
+        res_json = requests.get('https://api.nasa.gov/planetary/apod',params=parameters).json()
+        embed = discord.Embed(
+            title=res_json['title'],
+            description=res_json['explanation']+'\n\n[Go to the official APOD website to see!](https://apod.nasa.gov/apod/astropix.html)')
+        embed.set_image(url=str(res_json['url']))
+        await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Server_Info(bot))

@@ -3,7 +3,6 @@ from discord.ext import commands
 from discord.ext.commands.cooldowns import BucketType
 import random
 import datetime
-import requests
 import json
 import os
 
@@ -56,24 +55,6 @@ class fun(commands.Cog):
             description = full_pp,
             color =0xfefefe
         )
-        await ctx.send(embed=embed)
-
-    @commands.command(name='apod')
-    @commands.cooldown(1,30,BucketType.guild)
-    async def apod_c(self,ctx):
-        apikey = os.getenv('NASA')
-        date_ = datetime.datetime.now().strftime('%Y-%m-%d')
-        parameters = {
-            "api_key": apikey,
-            "date": date_,
-            "hd": True,
-            "thumbs": True
-        }
-        res_json = requests.get('https://api.nasa.gov/planetary/apod',params=parameters).json()
-        embed = discord.Embed(
-            title=res_json['title'],
-            description=res_json['explanation']+'\n\n[Go to the official APOD website to see!](https://apod.nasa.gov/apod/astropix.html)')
-        embed.set_image(url=str(res_json['url']))
         await ctx.send(embed=embed)
 
     @commands.command()
@@ -224,7 +205,16 @@ class fun(commands.Cog):
     async def tim(self,ctx):
         await ctx.send('t i m')
     
-    
+    @commands.command(aliases=['urbandictionary'])
+    async def urban(self, ctx, word=None):
+        if word == None:
+            await ctx.send(
+                "Mention a word. If you want to mention two or more words then don't give any space between the words"
+            )
+            return
+        else:
+            await ctx.send(f"https://urbandictionary.com/{word}")
+
 
 def setup(bot):
     bot.add_cog(fun(bot))

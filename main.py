@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 import datetime
 import os
-import random
 from pingsux import up
 import json
 import asyncio
@@ -53,27 +52,6 @@ async def on_command_error(ctx, exception):
 @client.command()
 async def error(ctx):
     await on_command_error(ctx,GWZError(f'{ctx.author.mention} asked for an error.'))
-
-@client.event
-async def on_message(msg):
-    if msg.author.id == 692250820741300266 and ("bruh" in msg.content or "hurb" in msg.content):
-        message_sent = msg.channel.send('<@!692250820741300266> Don\'t say `bruh`!')
-        await asyncio.sleep(20)
-        await message_sent.delete()
-    if 'mee6' in msg.clean_content.lower() and not ('cringe' in msg.clean_content) and msg.author != client.user and msg.author.bot == False:
-        await msg.channel.send('NOOOOOO')
-        await msg.channel.send('WHY DID YOU SAY THE M WORD')
-        await msg.channel.send('NOOOOOOO BANNNNNN')
-        await msg.channel.send('MEE6 NOOOOOO')
-        await msg.channel.send('GET HIM OUT')
-        await msg.channel.send('KILL HIM')
-        await msg.channel.send('OMGGGGGGGG NOOOOOOOO')
-        await msg.channel.send('NOOOOOO :police_car: :red_square: :police_car: :red_square:')
-        await msg.channel.send('<:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521>')
-        if msg.guild.id == 816957294218182707:
-            await msg.channel.send('<@!725600926509039688> <@!737317764770955275> GET HIMMMMMMMM <:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521><:no_mee6:818017749036564521>')
-        await msg.author.send("<:no_mee6:818017749036564521>")
-    await client.process_commands(msg) 
 
 @client.event
 async def on_guild_join(g):
@@ -130,18 +108,6 @@ async def invite(ctx):
         description=description,
         color=0xfefefe)
     await ctx.send(embed=embed)
-
-
-@client.command(aliases=['urbandictionary'])
-async def urban(ctx, word=None):
-    if word == None:
-        await ctx.send(
-            "Mention a word. If you want to mention two or more words then don't give any space between the words"
-        )
-        return
-    else:
-        await ctx.send(f"https://urbandictionary.com/{word}")
-
 
 @client.command(name='ping')
 async def ping_c(ctx, brrr: str = 'false'):
@@ -204,6 +170,51 @@ async def vote(ctx):
         color=0xfefefe)
     await ctx.send(embed=embed)
 
+@client.command()
+async def rule(ctx, rulenumber:int=None):
+    if ctx.guild.id == 816957294218182707:
+        if rulenumber == 1:
+            embed = discord.Embed(title = "Rule 1", description = ":white_small_square: Don't post NSFW. Posting NSFW will result in an instant ban without any warnings, mutes, etc.", color=0xff0609)
+            await ctx.send(embed=embed)
+        elif rulenumber == 2:
+            embed = discord.Embed(title = "Rule 2", description = ":white_small_square: Don't be toxic or annoy anyone.", color=0xff0609)
+            await ctx.send(embed=embed)
+        elif rulenumber == 3:
+            embed = discord.Embed(title = "Rule 3", description = ":white_small_square: Any type of advertising is not allowed. This includes dm advertising and if you get caught dm advertising people you will get banned instantly. If you know that someone is dm advertising then call the staff.", color=0xff0609)
+            await ctx.send(embed=embed)
+        elif rulenumber == 4:
+            embed = discord.Embed(title = "Rule 4", description = ":white_small_square: Any type of scamming or begging things like coins, nitro, etc. are strictly prohibited.", color=0xff0609)
+            await ctx.send(embed=embed)
+        elif rulenumber == 5:
+            embed = discord.Embed(title = "Rule 5", description = ":white_small_square: Don't ping staff unless you have an important question or emergency.", color=0xff0609)
+            await ctx.send(embed=embed)
+        elif rulenumber == 6:
+            embed = discord.Embed(title = "Rule 6", description = ":white_small_square: Raiding the server, hacking the server or anything like that will result in a permanent ban.", color=0xff0609)
+            await ctx.send(embed=embed)
+        elif rulenumber == 7:
+            embed = discord.Embed(title = "Rule 7", description = ":white_small_square: Don't be racist or homophobic (Saying n word will result in a 1 day ban and if you keep saying it you will get permanently banned from the server. Saying fag is also prohibited and will result in a 1 day ban).", color=0xff0609)
+            await ctx.send(embed=embed)
+        elif rulenumber == 8:
+            embed = discord.Embed(title = "Rule 8", description = ":white_small_square: Don't spam. This includes spamming commands in the bot channels and flooding chat. You can still spam in <#825764375482073119> since it's a spamming channel.", color=0xff0609)
+            await ctx.send(embed=embed)
+        elif rulenumber == 9:
+            embed = discord.Embed(title = "Rule 9", description = ":white_small_square: Alts are not allowed. If you use alts in this server it will be banned and if we find out that you're keeping using alts then you will also get banned.", color=0xff0609)
+            await ctx.send(embed=embed)
+        elif rulenumber == 10:
+            embed = discord.Embed(title = "Rule 10", description = ":white_small_square: Don't use bot commands in any channels except the bot channels.", color=0xff0609)
+            await ctx.send(embed=embed)
+        elif rulenumber == 11:
+            embed = discord.Embed(title = "Rule 11", description = ":white_small_square: Don't speak in any language except English. If you wanna talk with someone in another language, then go private.", color=0xff0609)
+            await ctx.send(embed=embed)
+        elif rulenumber == 12:
+            embed = discord.Embed(title = "Rule 12", description = ":white_small_square: No using cringe apps to make Discord bots. This includes websites like botghost. You can use IDE websites like repl.", color=0xff0609)
+            await ctx.send(embed=embed)
+        elif rulenumber == None:
+            await ctx.send("Mention the rule number.")
+        else:
+            await ctx.send(f"Rule number {rulenumber} doesn't exist.")
+    else:
+        return
 
 @help.command()
 async def currency(ctx):
@@ -288,10 +299,34 @@ async def info(ctx):
     embed.add_field(
         name="Info commands",
         value=
-        "member, role, channel, memberinfo, roleinfo, guildinfo, channelinfo")
+        "member, role, channel, memberinfo, roleinfo, guildinfo, channelinfo, apod, covid19")
 
     await ctx.send(embed=embed)
 
+@help.command(aliases=['covid','coronavirus','corona','covidinfo','covidi','cov','covinfo','covi'])
+async def covid19(ctx):
+    embed = discord.Embed(
+        title="Covid19",
+        description=
+        "Shows how many confirmed cases and death cases occured of covid-19 in the world.",
+        color=ctx.author.color)
+
+    embed.add_field(name="**Syntax**", value="^covid19")
+    embed.add_field(name="**Aliases**", value = "covid, coronavirus, corona, covidinfo, covidi, cov, covinfo, covi")
+
+    await ctx.send(embed=embed)
+
+@help.command()
+async def apod(ctx):
+    embed = discord.Embed(
+        title="Apod",
+        description=
+        "NASA apod.",
+        color=ctx.author.color)
+
+    embed.add_field(name="**Syntax**", value="^apod")
+
+    await ctx.send(embed=embed)
 
 @help.command()
 async def member(ctx):
@@ -339,16 +374,6 @@ async def memberinfo(ctx):
                           color=ctx.author.color)
 
     embed.add_field(name="**Syntax**", value="^memberinfo <member>")
-
-    await ctx.send(embed=embed)
-
-@help.command()
-async def hypixel(ctx):
-    embed = discord.Embed(title="Hypixel",
-                          description="Using the Hypixel API, we can see your Minecraft stats!",
-                          color=ctx.author.color)
-
-    embed.add_field(name="**Syntax**", value="^hypixel <name> [game] [page]")
 
     await ctx.send(embed=embed)
 
@@ -473,7 +498,7 @@ async def fun(ctx):
                           color=ctx.author.color)
 
     embed.add_field(name="Fun commands",
-                    value="8ball, pp, kill, emojify, powerof2, urban, apod, hypixel")
+                    value="8ball, pp, kill, emojify, powerof2, urban")
 
     await ctx.send(embed=embed)
 
