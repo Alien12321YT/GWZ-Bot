@@ -397,6 +397,21 @@ class currency(commands.Cog):
                 json.dump(bank,f,indent=4)
         else:
             await ctx.send('This command can only be used during Autumn season of the currency system!')
+            
+    @commands.command()
+    async def shovelsnow(self,ctx):
+        bank = await get_bank_data()
+        if bank['time']['season'] == 4:
+            paid_mon = random.randint(200,569)
+            snowcubes = random.randint(5,14)
+            await ctx.send(f'You earned **\u23E3{paid_mon}**! You also earned {snowcubes} Snowcubes.')
+            for i in range(snowcubes):
+                bank['players'][str(ctx.author.id)]['inv'].append('snow_cube')
+            bank['players'][str(ctx.author.id)]['bank'] += paid_mon
+            with open('mainbank.json','w') as f:
+                json.dump(bank,f,indent=4)
+        else:
+            await ctx.send('This command can only be used during Winter season of the currency system!')
 
     @commands.command(name='wheel')
     @commands.cooldown(1,7.5,BucketType.channel)
