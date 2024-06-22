@@ -1,4 +1,4 @@
-# GWZ Bot Source Dode
+# GWZ Bot Source Code
 
 ## Info
 This is GWZ Bot's source code, a Discord bot I made in 2020-2021. It is now discontinued and archived.
